@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор репутации Арсенала</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --primary-dark:#0a0a0a;--secondary-dark:#1a1a2e;--accent-dark:#16213e;
+            --accent-red:#c53030;--accent-yellow:#ecc94b;--accent-green:#48bb78;
+            --accent-orange:#ed8936;--text-light:#e0e0e0;--text-muted:#a0aec0;
+            --card-bg:rgba(30,30,40,0.95);--card-border:#444
+        }
+        body{
+            font-family:'Roboto',sans-serif;
+            background:linear-gradient(135deg,var(--primary-dark)0%,var(--secondary-dark)50%,var(--accent-dark)100%);
+            color:var(--text-light);min-height:100vh;padding:20px;line-height:1.6
+        }
+        .main-container{max-width:1800px;margin:0 auto;display:grid;grid-template-columns:1fr 350px;gap:20px;align-items:start}
+        .container{background:var(--card-bg);border-radius:12px;border:1px solid var(--card-border);box-shadow:0 10px 40px rgba(0,0,0,0.5);overflow:hidden;backdrop-filter:blur(10px)}
+        .header{background:linear-gradient(135deg,#2d3748 0%,#4a5568 100%);padding:30px 25px;text-align:center;border-bottom:2px solid var(--accent-red);position:relative;overflow:hidden}
+        .header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-red),var(--accent-yellow),var(--accent-red));animation:pulse 3s infinite}
+        @keyframes pulse{0%{opacity:0.7}50%{opacity:1}100%{opacity:0.7}}
+        .header h1{font-family:'Orbitron',sans-serif;font-size:2.2em;color:#fff;text-shadow:2px 2px 8px rgba(0,0,0,0.7);margin-bottom:10px;font-weight:700;letter-spacing:1.5px}
+        .author-note{color:#cbd5e0;font-size:0.9em;opacity:0.9;margin-bottom:8px}
+        .price-warning{color:var(--accent-yellow);font-size:0.85em;font-style:italic;max-width:600px;margin:0 auto}
+        .input-section{background:rgba(45,55,72,0.7);padding:25px;border-bottom:1px solid #4a5568;display:flex;align-items:flex-end;justify-content:center;gap:20px;flex-wrap:wrap}
+        .input-group{display:flex;flex-direction:column;align-items:center}
+        label{color:var(--accent-yellow);font-weight:600;margin-bottom:8px;font-size:1em;text-transform:uppercase;letter-spacing:0.8px;font-family:'Orbitron',sans-serif}
+        input{padding:12px 16px;font-size:15px;border:2px solid #4a5568;border-radius:8px;width:200px;text-align:center;background:#2d3748;color:#fff;transition:all 0.3s ease;font-family:'Roboto',sans-serif;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
+        input:focus{outline:none;border-color:var(--accent-yellow);box-shadow:0 0 12px rgba(236,201,75,0.4);transform:translateY(-2px)}
+        button{background:linear-gradient(135deg,var(--accent-red)0%,#e53e3e 100%);color:white;border:none;padding:12px 28px;font-size:15px;border-radius:8px;cursor:pointer;transition:all 0.3s ease;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;box-shadow:0 6px 20px rgba(197,48,48,0.4);font-family:'Orbitron',sans-serif;position:relative;overflow:hidden;height:48px}
+        button::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:0.5s}
+        button:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(197,48,48,0.5);background:linear-gradient(135deg,#e53e3e 0%,#f56565 100%)}
+        button:hover::after{left:100%}
+        .tabs{display:flex;background:#2d3748;border-bottom:1px solid #4a5568}
+        .tab{flex:1;padding:18px;text-align:center;background:#4a5568;border:none;cursor:pointer;font-size:15px;font-weight:600;transition:all 0.3s ease;color:#cbd5e0;text-transform:uppercase;letter-spacing:0.8px;border-right:1px solid #2d3748;font-family:'Orbitron',sans-serif;position:relative;overflow:hidden}
+        .tab:last-child{border-right:none}
+        .tab.active{background:var(--accent-red);color:#fff;box-shadow:inset 0 -4px 0 var(--accent-yellow)}
+        .tab:hover:not(.active){background:#718096;color:#fff}
+        .table-container{background:rgba(26,32,44,0.9);margin:0;overflow-x:auto;border-radius:0 0 8px 8px}
+        table{width:100%;border-collapse:collapse;min-width:1400px;table-layout:fixed}
+        th{background:#2d3748;color:var(--accent-yellow);padding:16px 8px;text-align:center;font-weight:600;border-bottom:2px solid var(--accent-red);text-transform:uppercase;font-size:0.9em;letter-spacing:0.8px;font-family:'Orbitron',sans-serif;white-space:normal;word-wrap:break-word;line-height:1.4}
+        td{padding:14px 8px;border-bottom:1px solid #4a5568;color:#e2e8f0;transition:background-color 0.2s;text-align:center;vertical-align:middle;white-space:normal;word-wrap:break-word;line-height:1.4}
+        .col-name{width:24%;word-wrap:break-word;white-space:normal;line-height:1.4;min-width:220px}
+        .col-death-drop{width:8%;min-width:80px}
+        .col-weight{width:6%}
+        .col-rep{width:8%}
+        .col-price{width:8%}
+        .col-rep-price{width:8%}
+        .col-quantity{width:8%}
+        .col-total-weight{width:8%}
+        .col-total-cost{width:14%}
+        tr{transition:transform 0.2s}
+        tr:hover{background:rgba(45,55,72,0.5);transform:translateX(5px)}
+        .best-option{background:rgba(72,187,120,0.2)!important;border-left:4px solid var(--accent-green)}
+        .good-option{background:rgba(237,137,54,0.2)!important;border-left:4px solid var(--accent-orange)}
+        .bad-option{background:rgba(245,101,101,0.2)!important;border-left:4px solid #f56565}
+        .sidebar{background:var(--card-bg);border-radius:12px;border:1px solid var(--card-border);box-shadow:0 10px 40px rgba(0,0,0,0.5);overflow:hidden;backdrop-filter:blur(10px);height:fit-content;position:sticky;top:20px}
+        .sidebar-header{background:linear-gradient(135deg,#2d3748 0%,#4a5568 100%);padding:20px;text-align:center;border-bottom:2px solid var(--accent-red)}
+        .sidebar-header h3{color:var(--accent-yellow);font-size:1.3em;text-transform:uppercase;letter-spacing:1.2px;text-shadow:1px 1px 3px rgba(0,0,0,0.5);font-family:'Orbitron',sans-serif}
+        .summary-content{padding:20px;background:rgba(45,55,72,0.9)}
+        .summary-grid{display:flex;flex-direction:column;gap:15px}
+        .summary-item{padding:18px;background:rgba(26,32,44,0.95);border-radius:8px;border:1px solid #4a5568;border-left:4px solid var(--accent-yellow);box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:transform 0.3s,box-shadow 0.3s;text-align:center}
+        .summary-item:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+        .summary-item h4{color:#cbd5e0;margin-bottom:10px;font-size:1.1em;border-bottom:1px solid #4a5568;padding-bottom:8px;font-family:'Orbitron',sans-serif}
+        .summary-item p{font-size:1.3em;font-weight:600;color:var(--accent-yellow);margin-bottom:6px}
+        .summary-item small{color:var(--text-muted);font-size:0.9em;display:block;margin-bottom:4px}
+        .success-text{color:var(--accent-green);font-weight:600}
+        .warning-text{color:var(--accent-yellow);font-weight:600}
+        ::-webkit-scrollbar{width:10px;height:10px}
+        ::-webkit-scrollbar-track{background:#2d3748;border-radius:5px}
+        ::-webkit-scrollbar-thumb{background:var(--accent-red);border-radius:5px}
+        ::-webkit-scrollbar-thumb:hover{background:#e53e3e}
+        @media (max-width:1024px){.main-container{grid-template-columns:1fr;gap:15px}.sidebar{position:static;order:-1}}
+        @media (max-width:768px){.input-section{flex-direction:column;gap:15px;align-items:center;padding:20px}.input-group{width:100%}input{width:100%;max-width:280px}button{width:100%;max-width:280px;margin:5px 0}.tabs{flex-direction:column}.tab{padding:15px}th,td{padding:10px 6px;font-size:13px}.header h1{font-size:1.8em}.col-name{width:25%;font-size:0.85em;min-width:200px}td,th{line-height:1.3}}
+        @media (max-width:480px){body{padding:10px}.container,.sidebar{border-radius:8px}.header{padding:20px 15px}.header h1{font-size:1.5em}.input-section{padding:15px}.summary-content{padding:15px}.summary-item{padding:15px}.col-name{width:30%;font-size:0.8em;min-width:180px}}
+        .tab-content{animation:fadeIn 0.5s ease}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .loading{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .weight-cell{white-space:nowrap;font-size:0.9em}
+        .personal-item{color:var(--accent-yellow);font-weight:600}
+        .death-drop-item{color:var(--accent-green);font-weight:600}
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="header">
+                <h1>🧮 КАЛЬКУЛЯТОР РЕПУТАЦИИ АРСЕНАЛА</h1>
+                <p class="author-note">Автор: Dante_AG</p>
+                <p class="price-warning">Внимание: стоимость товаров на аукционе постоянно меняется, цена и итоговая стоимость могут отличаться от реальной</p>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="reputation">Требуемая репутация:</label>
+                    <input type="number" id="reputation" value="30000" min="1" max="1000000">
+                </div>
+                <button id="calculate-btn">РАССЧИТАТЬ</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="individual">Отдельные предметы</button>
+                <button class="tab" data-tab="personal">Персональные ящики</button>
+                <button class="tab" data-tab="non-personal">Не персональные ящики</button>
+            </div>
+
+            <div id="individual" class="table-container tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-name">Наименование ресурса</th>
+                            <th class="col-death-drop">Выпадает при смерти</th>
+                            <th class="col-weight">Вес</th>
+                            <th class="col-rep">Репутация</th>
+                            <th class="col-price">Цена на аукционе</th>
+                            <th class="col-rep-price">Цена единицы репутации</th>
+                            <th class="col-quantity">Количество предметов</th>
+                            <th class="col-total-weight">Общий вес</th>
+                            <th class="col-total-cost">Итоговая стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody id="individual-body"></tbody>
+                </table>
+            </div>
+
+            <div id="personal" class="table-container tab-content" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-name">Наименование ресурса</th>
+                            <th class="col-quantity">Количество ресурса</th>
+                            <th class="col-price">Цена на аукционе</th>
+                            <th class="col-rep-price">Стоимость ящика</th>
+                            <th class="col-rep-price">Стоимость единицы репутации</th>
+                            <th class="col-quantity">Количество ящиков</th>
+                            <th class="col-total-weight">Общий вес</th>
+                            <th class="col-total-cost">Итоговая стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personal-body"></tbody>
+                </table>
+            </div>
+
+            <div id="non-personal" class="table-container tab-content" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-name">Наименование ресурса</th>
+                            <th class="col-quantity">Количество ресурса</th>
+                            <th class="col-price">Цена на аукционе</th>
+                            <th class="col-rep-price">Стоимость ящика</th>
+                            <th class="col-rep-price">Стоимость единицы репутации</th>
+                            <th class="col-quantity">Количество ящиков</th>
+                            <th class="col-total-weight">Общий вес</th>
+                            <th class="col-total-cost">Итоговая стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody id="non-personal-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>📊 СВОДКА ПО ОПТИМАЛЬНЫМ ВАРИАНТАМ</h3>
+            </div>
+            <div class="summary-content">
+                <div class="summary-grid" id="summary"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            
+            // Конфигурация данных (читаемый формат)
+            const config = {
+                individualItems: [
+                    { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 6, price: 3200 },
+                    { name: "Запчасти для пда", deathDrop: true, weight: 0.7, repPerUnit: 16, price: 8900 },
+                    { name: "Огромный артефактный фрагмент", deathDrop: true, weight: 0.5, repPerUnit: 2, price: 1250 },
+                    { name: "Обычный артефактный фрагмент", deathDrop: true, weight: 0.3, repPerUnit: 1, price: 1000 },
+                    { name: "Остатки приборов «Шепота»", deathDrop: true, weight: 2.5, repPerUnit: 100, price: 67000 },
+                    { name: "Фильтр", deathDrop: true, weight: 0.5, repPerUnit: 10, price: 4500 },
+                    { name: "Драгоценности", deathDrop: true, weight: 0.2, repPerUnit: 55, price: 38000 },
+                    { name: "Малый артефактный фрагмент", deathDrop: true, weight: 0.2, repPerUnit: 1, price: 710 },
+                    { name: "Рука сильного шныря", deathDrop: true, weight: 0.5, repPerUnit: 5, price: 3000 },
+                    { name: "Протоартефакт", deathDrop: true, weight: 0, repPerUnit: 5, price: 3800 },
+                    { name: "Большой ящик с продовольствием", deathDrop: true, weight: 6, repPerUnit: 9, price: 7000 },
+                    { name: "Черная селезенка", deathDrop: true, weight: 1.6, repPerUnit: 150, price: 160000 },
+                    { name: "Сердце Лимб", deathDrop: true, weight: 3, repPerUnit: 1000, price: 1050000 },
+                    { name: "Лоскут светящейся кожи", deathDrop: true, weight: 0.4, repPerUnit: 10, price: 6200 },
+                    { name: "Глаз сильного бурелома", deathDrop: true, weight: 1, repPerUnit: 15, price: 13000 },
+                    { name: "Медная катушка", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 9000 },
+                    { name: "Кость мутанта", deathDrop: true, weight: 2, repPerUnit: 6, price: 6000 },
+                    { name: "Медицинские инструменты", deathDrop: true, weight: 0.3, repPerUnit: 20, price: 25000 },
+                    { name: "Комплект заводских инструментов", deathDrop: true, weight: 0.4, repPerUnit: 11, price: 25000 },
+                    { name: "Блок данных «Лямбда»", deathDrop: false, weight: 0.2, repPerUnit: 150, price: 170000 },
+                    { name: "Прототипы «Шепота»", deathDrop: true, weight: 0.3, repPerUnit: 55, price: 73000 },
+                    { name: "Ящик с деталями", deathDrop: true, weight: 3, repPerUnit: 3, price: 3000 },
+                    { name: "Крупный артефактный фрагмент", deathDrop: true, weight: 0.4, repPerUnit: 1, price: 1500 },
+                    { name: "Соленоид", deathDrop: true, weight: 0.4, repPerUnit: 2, price: 9000 },
+                    { name: "Расцветший Горьколистник", deathDrop: false, weight: 0.05, repPerUnit: 65, price: 80000 },
+                    { name: "Набор компонентов брони", deathDrop: false, weight: 0.2, repPerUnit: 2, price: 3100 },
+                    { name: "Темный лимб", deathDrop: false, weight: 0.2, repPerUnit: 90, price: 150000 },
+                    { name: "Компоненты редких сплавов", deathDrop: true, weight: 0.4, repPerUnit: 35, price: 55000 },
+                    { name: "Концентрированная лимбоплазма", deathDrop: false, weight: 0.3, repPerUnit: 800, price: 1250000 },
+                    { name: "Хроносфера", deathDrop: false, weight: 0.25, repPerUnit: 175, price: 320000 },
+                    { name: "Ноутбук", deathDrop: true, weight: 10, repPerUnit: 12, price: 23000 },
+                    { name: "Системы наведения", deathDrop: true, weight: 0.4, repPerUnit: 16, price: 30000 },
+                    { name: "Блок данных «Бета»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 85000 },
+                    { name: "Квантовый генератор", deathDrop: false, weight: 3, repPerUnit: 30, price: 55000 },
+                    { name: "Цветущий рыжий папоротник", deathDrop: false, weight: 0.05, repPerUnit: 6, price: 12000 },
+                    { name: "Малый ящик с продовольствием", deathDrop: true, weight: 1, repPerUnit: 1, price: 2000 },
+                    { name: "Ящик с запчастями", deathDrop: true, weight: 2.5, repPerUnit: 1, price: 3000 },
+                    { name: "Блок данных «Гамма»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 95000 },
+                    { name: "Военный радиопередатчик", deathDrop: true, weight: 0.4, repPerUnit: 10, price: 30000 },
+                    { name: "Блок данных «Альфа»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 90000 },
+                    { name: "Модифицированная аномальная батарея", deathDrop: false, weight: 0.45, repPerUnit: 1000, price: 2600000 },
+                    { name: "Пси-маячок", deathDrop: false, weight: 0.15, repPerUnit: 7, price: 15000 },
+                    { name: "Очищенное вещество", deathDrop: false, weight: 0.05, repPerUnit: 9, price: 26000 },
+                    { name: "Промышленные запчасти", deathDrop: true, weight: 0.4, repPerUnit: 6, price: 15000 },
+                    { name: "Обычный ящик с продовольствием", deathDrop: true, weight: 2, repPerUnit: 3, price: 10000 },
+                    { name: "Набор компонентов оружия", deathDrop: false, weight: 0.2, repPerUnit: 6, price: 38000 }
+                ],
+                personalBoxes: [
+                    { name: "Прочный металл", resourcesNeeded: 2, resourcePrice: 80000 },
+                    { name: "Сосуд реактора", resourcesNeeded: 2, resourcePrice: 120000 },
+                    { name: "Измерительное оборудование", resourcesNeeded: 2, resourcePrice: 80000 },
+                    { name: "Защитное покрытие", resourcesNeeded: 2, resourcePrice: 80000 },
+                    { name: "Мутаген", resourcesNeeded: 1, resourcePrice: 180000 },
+                    { name: "Нейродегенерант", resourcesNeeded: 15, resourcePrice: 15000 },
+                    { name: "Теломераза", resourcesNeeded: 1, resourcePrice: 150000 },
+                    { name: "Продвинутый электрод", resourcesNeeded: 9, resourcePrice: 20000 },
+                    { name: "Операционный усилитель", resourcesNeeded: 3, resourcePrice: 60000 },
+                    { name: "Роторная система", resourcesNeeded: 3, resourcePrice: 70000 },
+                    { name: "Сверло", resourcesNeeded: 4, resourcePrice: 70000 }
+                ],
+                nonPersonalBoxes: [
+                    { name: "Набор болтов", resourcesNeeded: 9, resourcePrice: 15000 },
+                    { name: "Маячок группы Гамма", resourcesNeeded: 16, resourcePrice: 0 },
+                    { name: "Маячок группы Бета", resourcesNeeded: 16, resourcePrice: 0 },
+                    { name: "Маячок группы Альфа", resourcesNeeded: 16, resourcePrice: 0 },
+                    { name: "Пурпурные минералы", resourcesNeeded: 300, resourcePrice: 900 },
+                    { name: "Янтарная полынь", resourcesNeeded: 8, resourcePrice: 15000 },
+                    { name: "Гнозис", resourcesNeeded: 500, resourcePrice: 1000 },
+                    { name: "Электродвигатель", resourcesNeeded: 19, resourcePrice: 5000 },
+                    { name: "Чертоцвет", resourcesNeeded: 45, resourcePrice: 2500 },
+                    { name: "Алые минералы", resourcesNeeded: 130, resourcePrice: 1000 },
+                    { name: "Мутировавшие ферменты", resourcesNeeded: 10, resourcePrice: 11600 },
+                    { name: "Золотые минералы", resourcesNeeded: 20, resourcePrice: 7000 }
+                ]
+            };
+            
+            // Утилитарные функции
+            const utils = {
+                formatNumber: num => {
+                    if (typeof num !== 'number' || isNaN(num)) return '0';
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                },
+                
+                getTypeName: type => {
+                    const types = {
+                        'individual': 'Отдельный предмет',
+                        'personal': 'Персональный ящик',
+                        'non-personal': 'Не персональный ящик'
+                    };
+                    return types[type] || '';
+                },
+                
+                getTypeIcon: type => {
+                    const icons = {
+                        'individual': '📦',
+                        'personal': '🔒',
+                        'non-personal': '📦'
+                    };
+                    return icons[type] || '';
+                },
+                
+                validateInput: value => {
+                    const num = parseInt(value);
+                    return !isNaN(num) && num > 0 && num <= 1000000;
+                }
+            };
+            
+            // Основной калькулятор
+            const calculator = {
+                calculateIndividualItems(requiredRep) {
+                    const tbody = document.getElementById('individual-body');
+                    if (!tbody) return;
+                    
+                    tbody.innerHTML = '';
+                    
+                    const items = config.individualItems.map(item => {
+                        const repPerUnit = item.repPerUnit;
+                        const pricePerUnit = item.price;
+                        const weightPerUnit = item.weight;
+                        const repPerPrice = Math.round(pricePerUnit / repPerUnit);
+                        const quantityNeeded = Math.ceil(requiredRep / repPerUnit);
+                        const totalWeight = Math.round(quantityNeeded * weightPerUnit);
+                        const totalCost = quantityNeeded * pricePerUnit;
+                        
+                        return {
+                            ...item,
+                            repPerPrice,
+                            quantityNeeded,
+                            totalWeight,
+                            totalCost
+                        };
+                    });
+                    
+                    items.sort((a, b) => a.totalCost - b.totalCost);
+                    
+                    items.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        
+                        if (index === 0) row.className = 'best-option';
+                        else if (index < 5) row.className = 'good-option';
+                        else if (index > items.length - 5) row.className = 'bad-option';
+                        
+                        const deathDropText = item.deathDrop ? 
+                            '<span class="death-drop-item">✓</span>' : 
+                            '<span class="personal-item">✗</span>';
+                        
+                        const weightText = item.weight > 0 ? item.weight + ' кг' : '-';
+                        const totalWeightText = item.totalWeight > 0 ? utils.formatNumber(item.totalWeight) + ' кг' : '-';
+                        
+                        row.innerHTML = `
+                            <td>${this.escapeHtml(item.name)}</td>
+                            <td>${deathDropText}</td>
+                            <td class="weight-cell">${weightText}</td>
+                            <td>${item.repPerUnit}</td>
+                            <td>${utils.formatNumber(item.price)} р.</td>
+                            <td>${utils.formatNumber(item.repPerPrice)} р.</td>
+                            <td>${utils.formatNumber(item.quantityNeeded)}</td>
+                            <td class="weight-cell">${totalWeightText}</td>
+                            <td>${utils.formatNumber(item.totalCost)} р.</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                },
+                
+                escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+                
+                calculatePersonalBoxes(requiredRep) {
+                    const tbody = document.getElementById('personal-body');
+                    if (!tbody) return;
+                    
+                    tbody.innerHTML = '';
+                    
+                    const boxes = config.personalBoxes.map(box => {
+                        const boxCost = box.resourcesNeeded * box.resourcePrice;
+                        const repPerPrice = Math.round(boxCost / 80);
+                        const boxesNeeded = Math.ceil(requiredRep / 80);
+                        const totalWeight = boxesNeeded * 15;
+                        const totalCost = boxesNeeded * boxCost;
+                        
+                        return {
+                            ...box,
+                            boxCost,
+                            repPerPrice,
+                            boxesNeeded,
+                            totalWeight,
+                            totalCost
+                        };
+                    });
+                    
+                    boxes.sort((a, b) => a.totalCost - b.totalCost);
+                    
+                    boxes.forEach((box, index) => {
+                        const row = document.createElement('tr');
+                        
+                        if (index === 0) row.className = 'best-option';
+                        else if (index < 3) row.className = 'good-option';
+                        
+                        row.innerHTML = `
+                            <td>${this.escapeHtml(box.name)}</td>
+                            <td>${box.resourcesNeeded}</td>
+                            <td>${utils.formatNumber(box.resourcePrice)} р.</td>
+                            <td>${utils.formatNumber(box.boxCost)} р.</td>
+                            <td>${utils.formatNumber(box.repPerPrice)} р.</td>
+                            <td>${utils.formatNumber(box.boxesNeeded)}</td>
+                            <td class="weight-cell">${utils.formatNumber(box.totalWeight)} кг</td>
+                            <td>${utils.formatNumber(box.totalCost)} р.</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                },
+                
+                calculateNonPersonalBoxes(requiredRep) {
+                    const tbody = document.getElementById('non-personal-body');
+                    if (!tbody) return;
+                    
+                    tbody.innerHTML = '';
+                    
+                    const boxes = config.nonPersonalBoxes.map(box => {
+                        const boxCost = box.resourcesNeeded * box.resourcePrice;
+                        const repPerPrice = Math.round(boxCost / 135);
+                        const boxesNeeded = Math.ceil(requiredRep / 135);
+                        const totalWeight = boxesNeeded * 15;
+                        const totalCost = boxesNeeded * boxCost;
+                        
+                        return {
+                            ...box,
+                            boxCost,
+                            repPerPrice,
+                            boxesNeeded,
+                            totalWeight,
+                            totalCost
+                        };
+                    });
+                    
+                    boxes.sort((a, b) => a.totalCost - b.totalCost);
+                    
+                    boxes.forEach((box, index) => {
+                        const row = document.createElement('tr');
+                        
+                        if (index === 0 && box.resourcePrice > 0) row.className = 'best-option';
+                        else if (index < 3 && box.resourcePrice > 0) row.className = 'good-option';
+                        
+                        row.innerHTML = `
+                            <td>${this.escapeHtml(box.name)}</td>
+                            <td>${box.resourcesNeeded}</td>
+                            <td>${box.resourcePrice > 0 ? utils.formatNumber(box.resourcePrice) + ' р.' : '-'}</td>
+                            <td>${box.resourcePrice > 0 ? utils.formatNumber(box.boxCost) + ' р.' : '-'}</td>
+                            <td>${box.resourcePrice > 0 ? utils.formatNumber(box.repPerPrice) + ' р.' : '-'}</td>
+                            <td>${utils.formatNumber(box.boxesNeeded)}</td>
+                            <td class="weight-cell">${utils.formatNumber(box.totalWeight)} кг</td>
+                            <td>${box.resourcePrice > 0 ? utils.formatNumber(box.totalCost) + ' р.' : '-'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                },
+                
+                updateSummary(requiredRep) {
+                    const summary = document.getElementById('summary');
+                    if (!summary) return;
+                    
+                    const bestIndividual = config.individualItems
+                        .filter(item => item.price > 0)
+                        .map(item => {
+                            const quantity = Math.ceil(requiredRep / item.repPerUnit);
+                            const totalWeight = Math.round(quantity * item.weight);
+                            return {
+                                type: 'individual',
+                                name: item.name,
+                                cost: quantity * item.price,
+                                repPerPrice: Math.round(item.price / item.repPerUnit),
+                                quantity: quantity,
+                                weight: totalWeight,
+                                deathDrop: item.deathDrop
+                            };
+                        })
+                        .sort((a, b) => a.cost - b.cost)[0];
+                    
+                    const bestPersonal = config.personalBoxes
+                        .filter(box => box.resourcePrice > 0)
+                        .map(box => {
+                            const boxCost = box.resourcesNeeded * box.resourcePrice;
+                            const boxes = Math.ceil(requiredRep / 80);
+                            return {
+                                type: 'personal',
+                                name: box.name,
+                                cost: boxes * boxCost,
+                                repPerPrice: Math.round(boxCost / 80),
+                                boxes: boxes,
+                                weight: boxes * 15
+                            };
+                        })
+                        .sort((a, b) => a.cost - b.cost)[0];
+                    
+                    const bestNonPersonal = config.nonPersonalBoxes
+                        .filter(box => box.resourcePrice > 0)
+                        .map(box => {
+                            const boxCost = box.resourcesNeeded * box.resourcePrice;
+                            const boxes = Math.ceil(requiredRep / 135);
+                            return {
+                                type: 'non-personal',
+                                name: box.name,
+                                cost: boxes * boxCost,
+                                repPerPrice: Math.round(boxCost / 135),
+                                boxes: boxes,
+                                weight: boxes * 15
+                            };
+                        })
+                        .sort((a, b) => a.cost - b.cost)[0];
+                    
+                    const availableOptions = [bestIndividual, bestPersonal, bestNonPersonal]
+                        .filter(option => option !== undefined && option.cost > 0);
+                    
+                    if (availableOptions.length === 0) {
+                        summary.innerHTML = `
+                            <div class="summary-item">
+                                <h4>⚠️ НЕТ ДОСТУПНЫХ ВАРИАНТОВ</h4>
+                                <p>Все ресурсы имеют нулевую стоимость</p>
+                                <small>Проверьте данные о ценах</small>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const bestOverall = availableOptions.sort((a, b) => a.cost - b.cost)[0];
+                    
+                    let summaryHTML = '';
+                    
+                    if (bestOverall) {
+                        const deathDropInfo = bestOverall.deathDrop !== undefined ? 
+                            (bestOverall.deathDrop ? 'Выпадает при смерти' : 'Персональный предмет') : '';
+                            
+                        summaryHTML += `
+                            <div class="summary-item">
+                                <h4>🏆 САМЫЙ ВЫГОДНЫЙ ВАРИАНТ</h4>
+                                <p>${this.escapeHtml(bestOverall.name)}</p>
+                                <small>Тип: ${utils.getTypeName(bestOverall.type)}</small>
+                                ${deathDropInfo ? `<small>${deathDropInfo}</small>` : ''}
+                                <p class="success-text">${utils.formatNumber(bestOverall.cost)} р.</p>
+                                <small>Цена за единицу репутации: ${utils.formatNumber(bestOverall.repPerPrice)} р.</small>
+                                <small>Общий вес: ${bestOverall.weight ? utils.formatNumber(bestOverall.weight) + ' кг' : 'не указан'}</small>
+                            </div>
+                        `;
+                    }
+                    
+                    availableOptions
+                        .filter(option => option !== bestOverall)
+                        .sort((a, b) => a.cost - b.cost)
+                        .slice(0, 3)
+                        .forEach(option => {
+                            const deathDropInfo = option.deathDrop !== undefined ? 
+                                (option.deathDrop ? 'Выпадает при смерти' : 'Персональный предмет') : '';
+                                
+                            summaryHTML += `
+                                <div class="summary-item">
+                                    <h4>${utils.getTypeIcon(option.type)} ${utils.getTypeName(option.type)}</h4>
+                                    <p>${this.escapeHtml(option.name)}</p>
+                                    <small>${option.type === 'individual' ? 'Кол-во: ' + utils.formatNumber(option.quantity) : 'Ящиков: ' + utils.formatNumber(option.boxes)}</small>
+                                    ${deathDropInfo ? `<small>${deathDropInfo}</small>` : ''}
+                                    <p class="${option.cost <= bestOverall.cost * 1.2 ? 'success-text' : 'warning-text'}">${utils.formatNumber(option.cost)} р.</p>
+                                    <small>Цена за единицу репутации: ${utils.formatNumber(option.repPerPrice)} р.</small>
+                                    <small>Общий вес: ${option.weight ? utils.formatNumber(option.weight) + ' кг' : 'не указан'}</small>
+                                </div>
+                            `;
+                        });
+                    
+                    summary.innerHTML = summaryHTML;
+                }
+            };
+            
+            // Управление интерфейсом
+            const ui = {
+                showTab(tabName) {
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.style.display = 'none';
+                    });
+                    
+                    const targetTab = document.getElementById(tabName);
+                    if (targetTab) {
+                        targetTab.style.display = 'block';
+                    }
+                    
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    const activeTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+                    if (activeTab) {
+                        activeTab.classList.add('active');
+                    }
+                },
+                
+                calculateAll() {
+                    const reputationInput = document.getElementById('reputation');
+                    if (!reputationInput) return;
+                    
+                    const requiredRep = parseInt(reputationInput.value);
+                    
+                    if (!utils.validateInput(requiredRep)) {
+                        alert('Пожалуйста, введите корректное количество репутации (от 1 до 1,000,000)');
+                        return;
+                    }
+                    
+                    const calculateButton = document.getElementById('calculate-btn');
+                    if (!calculateButton) return;
+                    
+                    const originalText = calculateButton.textContent;
+                    calculateButton.innerHTML = '<span class="loading"></span> РАСЧЕТ...';
+                    calculateButton.disabled = true;
+                    
+                    setTimeout(() => {
+                        calculator.calculateIndividualItems(requiredRep);
+                        calculator.calculatePersonalBoxes(requiredRep);
+                        calculator.calculateNonPersonalBoxes(requiredRep);
+                        calculator.updateSummary(requiredRep);
+                        
+                        calculateButton.innerHTML = originalText;
+                        calculateButton.disabled = false;
+                    }, 500);
+                }
+            };
+            
+            // Инициализация приложения
+            function init() {
+                // Назначаем обработчики событий
+                const calculateBtn = document.getElementById('calculate-btn');
+                if (calculateBtn) {
+                    calculateBtn.addEventListener('click', ui.calculateAll);
+                }
+                
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const tabName = this.getAttribute('data-tab');
+                        if (tabName) {
+                            ui.showTab(tabName);
+                        }
+                    });
+                });
+                
+                // Выполняем первоначальный расчет
+                ui.calculateAll();
+            }
+            
+            // Запускаем приложение после загрузки DOM
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+            
+        })();
+    </script>
+</body>
+</html>
