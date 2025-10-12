@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор репутации Арсенала</title>
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{
@@ -175,11 +174,25 @@
         </div>
     </div>
 
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104609292', 'ym');
+
+        ym(104609292, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104609292" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
     <script>
         (function() {
             'use strict';
             
-            
+            // Конфигурация данных (читаемый формат)
             const config = {
                 individualItems: [
                     { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 6, price: 3200 },
@@ -258,7 +271,7 @@
                 ]
             };
             
-           
+            // Утилитарные функции
             const utils = {
                 formatNumber: num => {
                     if (typeof num !== 'number' || isNaN(num)) return '0';
@@ -289,7 +302,7 @@
                 }
             };
             
-           
+            // Основной калькулятор
             const calculator = {
                 calculateIndividualItems(requiredRep) {
                     const tbody = document.getElementById('individual-body');
@@ -442,139 +455,116 @@
                     });
                 },
                 
-                updateSummary(requiredRep) {
+                calculateOptimalOptions(requiredRep) {
                     const summary = document.getElementById('summary');
                     if (!summary) return;
                     
-                    const bestIndividual = config.individualItems
-                        .filter(item => item.price > 0)
-                        .map(item => {
-                            const quantity = Math.ceil(requiredRep / item.repPerUnit);
-                            const totalWeight = Math.round(quantity * item.weight);
-                            return {
-                                type: 'individual',
-                                name: item.name,
-                                cost: quantity * item.price,
-                                repPerPrice: Math.round(item.price / item.repPerUnit),
-                                quantity: quantity,
-                                weight: totalWeight,
-                                deathDrop: item.deathDrop
-                            };
-                        })
-                        .sort((a, b) => a.cost - b.cost)[0];
+                    summary.innerHTML = '';
                     
-                    const bestPersonal = config.personalBoxes
+                    const individualItems = config.individualItems.map(item => {
+                        const quantityNeeded = Math.ceil(requiredRep / item.repPerUnit);
+                        const totalCost = quantityNeeded * item.price;
+                        const totalWeight = quantityNeeded * item.weight;
+                        
+                        return {
+                            type: 'individual',
+                            name: item.name,
+                            totalCost,
+                            totalWeight,
+                            quantityNeeded,
+                            repPerUnit: item.repPerUnit,
+                            pricePerUnit: item.price
+                        };
+                    });
+                    
+                    const personalBoxes = config.personalBoxes.map(box => {
+                        const boxCost = box.resourcesNeeded * box.resourcePrice;
+                        const boxesNeeded = Math.ceil(requiredRep / 80);
+                        const totalCost = boxesNeeded * boxCost;
+                        const totalWeight = boxesNeeded * 15;
+                        
+                        return {
+                            type: 'personal',
+                            name: box.name,
+                            totalCost,
+                            totalWeight,
+                            quantityNeeded: boxesNeeded,
+                            repPerUnit: 80,
+                            pricePerUnit: boxCost
+                        };
+                    });
+                    
+                    const nonPersonalBoxes = config.nonPersonalBoxes
                         .filter(box => box.resourcePrice > 0)
                         .map(box => {
                             const boxCost = box.resourcesNeeded * box.resourcePrice;
-                            const boxes = Math.ceil(requiredRep / 80);
-                            return {
-                                type: 'personal',
-                                name: box.name,
-                                cost: boxes * boxCost,
-                                repPerPrice: Math.round(boxCost / 80),
-                                boxes: boxes,
-                                weight: boxes * 15
-                            };
-                        })
-                        .sort((a, b) => a.cost - b.cost)[0];
-                    
-                    const bestNonPersonal = config.nonPersonalBoxes
-                        .filter(box => box.resourcePrice > 0)
-                        .map(box => {
-                            const boxCost = box.resourcesNeeded * box.resourcePrice;
-                            const boxes = Math.ceil(requiredRep / 135);
+                            const boxesNeeded = Math.ceil(requiredRep / 135);
+                            const totalCost = boxesNeeded * boxCost;
+                            const totalWeight = boxesNeeded * 15;
+                            
                             return {
                                 type: 'non-personal',
                                 name: box.name,
-                                cost: boxes * boxCost,
-                                repPerPrice: Math.round(boxCost / 135),
-                                boxes: boxes,
-                                weight: boxes * 15
+                                totalCost,
+                                totalWeight,
+                                quantityNeeded: boxesNeeded,
+                                repPerUnit: 135,
+                                pricePerUnit: boxCost
                             };
-                        })
-                        .sort((a, b) => a.cost - b.cost)[0];
-                    
-                    const availableOptions = [bestIndividual, bestPersonal, bestNonPersonal]
-                        .filter(option => option !== undefined && option.cost > 0);
-                    
-                    if (availableOptions.length === 0) {
-                        summary.innerHTML = `
-                            <div class="summary-item">
-                                <h4>⚠️ НЕТ ДОСТУПНЫХ ВАРИАНТОВ</h4>
-                                <p>Все ресурсы имеют нулевую стоимость</p>
-                                <small>Проверьте данные о ценах</small>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    const bestOverall = availableOptions.sort((a, b) => a.cost - b.cost)[0];
-                    
-                    let summaryHTML = '';
-                    
-                    if (bestOverall) {
-                        const deathDropInfo = bestOverall.deathDrop !== undefined ? 
-                            (bestOverall.deathDrop ? 'Выпадает при смерти' : 'Персональный предмет') : '';
-                            
-                        summaryHTML += `
-                            <div class="summary-item">
-                                <h4>🏆 САМЫЙ ВЫГОДНЫЙ ВАРИАНТ</h4>
-                                <p>${this.escapeHtml(bestOverall.name)}</p>
-                                <small>Тип: ${utils.getTypeName(bestOverall.type)}</small>
-                                ${deathDropInfo ? `<small>${deathDropInfo}</small>` : ''}
-                                <p class="success-text">${utils.formatNumber(bestOverall.cost)} р.</p>
-                                <small>Цена за единицу репутации: ${utils.formatNumber(bestOverall.repPerPrice)} р.</small>
-                                <small>Общий вес: ${bestOverall.weight ? utils.formatNumber(bestOverall.weight) + ' кг' : 'не указан'}</small>
-                            </div>
-                        `;
-                    }
-                    
-                    availableOptions
-                        .filter(option => option !== bestOverall)
-                        .sort((a, b) => a.cost - b.cost)
-                        .slice(0, 3)
-                        .forEach(option => {
-                            const deathDropInfo = option.deathDrop !== undefined ? 
-                                (option.deathDrop ? 'Выпадает при смерти' : 'Персональный предмет') : '';
-                                
-                            summaryHTML += `
-                                <div class="summary-item">
-                                    <h4>${utils.getTypeIcon(option.type)} ${utils.getTypeName(option.type)}</h4>
-                                    <p>${this.escapeHtml(option.name)}</p>
-                                    <small>${option.type === 'individual' ? 'Кол-во: ' + utils.formatNumber(option.quantity) : 'Ящиков: ' + utils.formatNumber(option.boxes)}</small>
-                                    ${deathDropInfo ? `<small>${deathDropInfo}</small>` : ''}
-                                    <p class="${option.cost <= bestOverall.cost * 1.2 ? 'success-text' : 'warning-text'}">${utils.formatNumber(option.cost)} р.</p>
-                                    <small>Цена за единицу репутации: ${utils.formatNumber(option.repPerPrice)} р.</small>
-                                    <small>Общий вес: ${option.weight ? utils.formatNumber(option.weight) + ' кг' : 'не указан'}</small>
-                                </div>
-                            `;
                         });
                     
-                    summary.innerHTML = summaryHTML;
+                    const allOptions = [...individualItems, ...personalBoxes, ...nonPersonalBoxes]
+                        .filter(option => option.totalCost > 0)
+                        .sort((a, b) => a.totalCost - b.totalCost)
+                        .slice(0, 6);
+                    
+                    allOptions.forEach((option, index) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'summary-item';
+                        
+                        const isBest = index === 0;
+                        const costClass = isBest ? 'success-text' : 'warning-text';
+                        
+                        itemDiv.innerHTML = `
+                            <h4>${utils.getTypeIcon(option.type)} ${utils.getTypeName(option.type)}</h4>
+                            <p>${this.escapeHtml(option.name)}</p>
+                            <p class="${costClass}">${utils.formatNumber(option.totalCost)} р.</p>
+                            <small>Вес: ${utils.formatNumber(option.totalWeight)} кг</small>
+                            <small>Количество: ${utils.formatNumber(option.quantityNeeded)}</small>
+                            <small>Репутация за единицу: ${option.repPerUnit}</small>
+                        `;
+                        
+                        summary.appendChild(itemDiv);
+                    });
                 }
             };
             
-            
-            const ui = {
-                showTab(tabName) {
-                    document.querySelectorAll('.tab-content').forEach(tab => {
-                        tab.style.display = 'none';
-                    });
+            // Обработчики событий
+            const eventHandlers = {
+                init() {
+                    const calculateBtn = document.getElementById('calculate-btn');
+                    const tabs = document.querySelectorAll('.tab');
+                    const reputationInput = document.getElementById('reputation');
                     
-                    const targetTab = document.getElementById(tabName);
-                    if (targetTab) {
-                        targetTab.style.display = 'block';
+                    if (calculateBtn) {
+                        calculateBtn.addEventListener('click', () => this.calculateAll());
                     }
                     
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.classList.remove('active');
-                    });
-                    
-                    const activeTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
-                    if (activeTab) {
-                        activeTab.classList.add('active');
+                    if (tabs.length > 0) {
+                        tabs.forEach(tab => {
+                            tab.addEventListener('click', (e) => this.switchTab(e.target));
+                        });
                     }
+                    
+                    if (reputationInput) {
+                        reputationInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                this.calculateAll();
+                            }
+                        });
+                    }
+                    
+                    this.calculateAll();
                 },
                 
                 calculateAll() {
@@ -584,57 +574,49 @@
                     const requiredRep = parseInt(reputationInput.value);
                     
                     if (!utils.validateInput(requiredRep)) {
-                        alert('Пожалуйста, введите корректное количество репутации (от 1 до 1,000,000)');
+                        alert('Пожалуйста, введите корректное значение репутации (от 1 до 1,000,000)');
+                        reputationInput.focus();
                         return;
                     }
                     
-                    const calculateButton = document.getElementById('calculate-btn');
-                    if (!calculateButton) return;
+                    const calculateBtn = document.getElementById('calculate-btn');
+                    const originalText = calculateBtn.textContent;
                     
-                    const originalText = calculateButton.textContent;
-                    calculateButton.innerHTML = '<span class="loading"></span> РАСЧЕТ...';
-                    calculateButton.disabled = true;
+                    calculateBtn.innerHTML = '<span class="loading"></span> РАСЧЕТ...';
+                    calculateBtn.disabled = true;
                     
                     setTimeout(() => {
                         calculator.calculateIndividualItems(requiredRep);
                         calculator.calculatePersonalBoxes(requiredRep);
                         calculator.calculateNonPersonalBoxes(requiredRep);
-                        calculator.updateSummary(requiredRep);
+                        calculator.calculateOptimalOptions(requiredRep);
                         
-                        calculateButton.innerHTML = originalText;
-                        calculateButton.disabled = false;
-                    }, 500);
+                        calculateBtn.innerHTML = originalText;
+                        calculateBtn.disabled = false;
+                    }, 100);
+                },
+                
+                switchTab(clickedTab) {
+                    const tabs = document.querySelectorAll('.tab');
+                    const tabContents = document.querySelectorAll('.tab-content');
+                    
+                    tabs.forEach(tab => tab.classList.remove('active'));
+                    tabContents.forEach(content => content.style.display = 'none');
+                    
+                    clickedTab.classList.add('active');
+                    const tabId = clickedTab.getAttribute('data-tab');
+                    const activeContent = document.getElementById(tabId);
+                    
+                    if (activeContent) {
+                        activeContent.style.display = 'block';
+                    }
                 }
             };
             
-           
-            function init() {
-               
-                const calculateBtn = document.getElementById('calculate-btn');
-                if (calculateBtn) {
-                    calculateBtn.addEventListener('click', ui.calculateAll);
-                }
-                
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        const tabName = this.getAttribute('data-tab');
-                        if (tabName) {
-                            ui.showTab(tabName);
-                        }
-                    });
-                });
-                
-               
-                ui.calculateAll();
-            }
-            
-           
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
-            
+            // Инициализация при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function() {
+                eventHandlers.init();
+            });
         })();
     </script>
 </body>
