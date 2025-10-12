@@ -174,7 +174,7 @@
         </div>
     </div>
 
-    <!-- Yandex.Metrika counter -->
+    
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -186,13 +186,12 @@
         ym(104609292, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/104609292" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+  
 
     <script>
         (function() {
             'use strict';
             
-            // Конфигурация данных (читаемый формат)
             const config = {
                 individualItems: [
                     { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 6, price: 3200 },
@@ -271,7 +270,7 @@
                 ]
             };
             
-            // Утилитарные функции
+            
             const utils = {
                 formatNumber: num => {
                     if (typeof num !== 'number' || isNaN(num)) return '0';
@@ -302,7 +301,7 @@
                 }
             };
             
-            // Основной калькулятор
+        
             const calculator = {
                 calculateIndividualItems(requiredRep) {
                     const tbody = document.getElementById('individual-body');
@@ -539,7 +538,7 @@
                 }
             };
             
-            // Обработчики событий
+            
             const eventHandlers = {
                 init() {
                     const calculateBtn = document.getElementById('calculate-btn');
@@ -613,7 +612,7 @@
                 }
             };
             
-            // Инициализация при загрузке страницы
+       
             document.addEventListener('DOMContentLoaded', function() {
                 eventHandlers.init();
             });
@@ -621,3 +620,4 @@
     </script>
 </body>
 </html>
+
