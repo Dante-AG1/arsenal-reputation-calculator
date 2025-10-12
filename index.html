@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор репутации Арсенала</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{
@@ -174,7 +175,6 @@
         </div>
     </div>
 
-    
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -186,7 +186,6 @@
         ym(104609292, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/104609292" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  
 
     <script>
         (function() {
@@ -270,7 +269,6 @@
                 ]
             };
             
-            
             const utils = {
                 formatNumber: num => {
                     if (typeof num !== 'number' || isNaN(num)) return '0';
@@ -301,7 +299,6 @@
                 }
             };
             
-        
             const calculator = {
                 calculateIndividualItems(requiredRep) {
                     const tbody = document.getElementById('individual-body');
@@ -512,10 +509,23 @@
                             };
                         });
                     
-                    const allOptions = [...individualItems, ...personalBoxes, ...nonPersonalBoxes]
+                    const topIndividual = individualItems
                         .filter(option => option.totalCost > 0)
                         .sort((a, b) => a.totalCost - b.totalCost)
-                        .slice(0, 6);
+                        .slice(0, 2);
+                    
+                    const topPersonal = personalBoxes
+                        .filter(option => option.totalCost > 0)
+                        .sort((a, b) => a.totalCost - b.totalCost)
+                        .slice(0, 2);
+                    
+                    const topNonPersonal = nonPersonalBoxes
+                        .filter(option => option.totalCost > 0)
+                        .sort((a, b) => a.totalCost - b.totalCost)
+                        .slice(0, 2);
+                    
+                    const allOptions = [...topIndividual, ...topPersonal, ...topNonPersonal]
+                        .sort((a, b) => a.totalCost - b.totalCost);
                     
                     allOptions.forEach((option, index) => {
                         const itemDiv = document.createElement('div');
@@ -537,7 +547,6 @@
                     });
                 }
             };
-            
             
             const eventHandlers = {
                 init() {
@@ -612,7 +621,6 @@
                 }
             };
             
-       
             document.addEventListener('DOMContentLoaded', function() {
                 eventHandlers.init();
             });
@@ -620,4 +628,3 @@
     </script>
 </body>
 </html>
-
