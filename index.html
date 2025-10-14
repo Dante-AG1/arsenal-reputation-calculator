@@ -15,7 +15,7 @@
   --danger:#d46b6b;
   --radius:12px;
   --gap:16px;
-  --maxw:1700px; /* увеличено на 400px (из 1300 -> 1700) */
+  --maxw:1700px; 
   color-scheme: dark;
   font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -28,7 +28,7 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
-/* контейнер стал шире за счёт --maxw */
+
 .wrap{max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;} /* увеличил правую колонку до 380px */
 @media (max-width:1000px){.wrap{grid-template-columns:1fr; padding:12px}}
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:var(--radius);padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
@@ -36,30 +36,30 @@ body{
 .title h1{font-size:1.25rem;margin:0;display:flex;gap:10px;align-items:center}
 .title p{margin:0;color:var(--muted);font-size:0.9rem}
 
-/* toolbar: сначала ввод и кнопка, затем поиск под ними */
+
 .toolbar{display:flex;flex-direction:column;gap:10px;margin-top:12px}
 .toolbar-row{display:flex;gap:8px;align-items:center}
 .controls-right{margin-left:auto;display:flex;align-items:center}
 
-/* поля и кнопки */
+
 .input{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;min-width:150px}
 .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent-gold), #c9b05a);color:#0d0d0d;font-weight:700}
 .small{padding:6px 8px;font-size:0.9rem;border-radius:8px}
 
-/* Поиск находится отдельной строкой под вводом */
+
 .search{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;width:100%;min-width:160px}
 
-/* tabs: НЕактивные должны выделяться по контуру — увеличим видимость рамки */
+
 .tabs{display:flex;gap:8px}
 .tab{
   padding:8px 12px;border-radius:8px;background:transparent;border:2px solid rgba(255,255,255,0.08);cursor:pointer;color:var(--muted);font-weight:700;
   transition:all 140ms ease;
 }
-/* при наведении усилить контур */
+
 .tab:hover{border-color:rgba(212,184,92,0.18);color:#fff}
 .tab.active{background:linear-gradient(90deg, rgba(212,184,92,0.12), rgba(212,184,92,0.06));color: #fff; border-color: rgba(212,184,92,0.25)}
 
-/* таблица: сохраняем layout и размеры ячеек, но предотвращаем горизонтальную прокрутку */
+
 .table-wrap{margin-top:14px;border-radius:10px;overflow-x:hidden;background:transparent}
 .table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:0.95rem}
 thead th{position:sticky;top:0;background:linear-gradient(180deg, rgba(10,12,16,0.7), rgba(10,12,16,0.6));padding:12px 8px;color:var(--accent-gold);font-weight:700;border-bottom:2px solid rgba(255,255,255,0.03);text-align:center}
@@ -70,7 +70,7 @@ tr:hover td{background:rgba(255,255,255,0.01);transform:translateX(4px);transiti
 .good-option{background:rgba(237,137,54,0.06);border-left:4px solid rgba(237,137,54,0.18)}
 .best-option{background:rgba(62,166,106,0.06);border-left:4px solid rgba(62,166,106,0.2)}
 
-/* сохраняем ширины колонок (ты просил не менять размеры ячеек) */
+
 th.col-name, td.col-name{width:28%;min-width:160px}
 th.col-death, td.col-death{width:8%;min-width:70px}
 th.col-weight, td.col-weight{width:6%;min-width:60px}
@@ -85,14 +85,14 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
   thead th, tbody td{font-size:0.9rem;padding:10px 6px}
 }
 
-/* подсветка совпадений поиска */
+
 .match{background:linear-gradient(90deg, rgba(212,184,92,0.14), rgba(212,184,92,0.04));padding:0 2px;border-radius:2px;color:inherit}
 
-/* Sidebar widget (фиксированная правая колонка) - ИСПРАВЛЕНА */
-.sidebar{position:sticky;top:20px;align-self:start;min-height:400px} /* добавил минимальную высоту */
-.sidebar .card{padding:16px;min-height:400px;display:flex;flex-direction:column} /* увеличил отступы и добавил flex */
-.widget{display:flex;flex-direction:column;gap:12px;flex:1} /* изменил на flex column */
-.widget-grid{display:grid;grid-template-columns:1fr;gap:12px;width:100%} /* изменил на одну колонку */
+
+.sidebar{position:sticky;top:20px;align-self:start;min-height:400px} 
+.sidebar .card{padding:16px;min-height:400px;display:flex;flex-direction:column} 
+.widget{display:flex;flex-direction:column;gap:12px;flex:1} 
+.widget-grid{display:grid;grid-template-columns:1fr;gap:12px;width:100%} 
 .widget-card{
   background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   padding:14px;
@@ -114,11 +114,11 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
 .widget-card .meta{font-size:0.85rem;color:var(--muted);margin-top:4px;line-height:1.2}
 .footer-note{font-size:0.85rem;color:var(--muted);margin-top:12px;text-align:center}
 
-/* Важное уведомление о ценах */
+
 .price-warning{background:rgba(212,184,92,0.08);border:1px solid rgba(212,184,92,0.2);border-radius:8px;padding:12px;margin-top:12px;font-size:0.9rem}
 .price-warning strong{color:var(--accent-gold);display:block;margin-bottom:4px}
 
-/* visually-hidden for accessibility */
+
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
 </style>
 </head>
@@ -132,13 +132,13 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
       </div>
     </header>
 
-    <!-- Важное уведомление о ценах -->
+   
     <div class="price-warning" role="alert" aria-live="polite">
       <strong>⚠️ Внимание: цены на аукционе постоянно меняются</strong>
       <span>Итоговая стоимость в калькуляторе является ориентировочной и может отличаться от реальной рыночной цены.</span>
     </div>
 
-    <!-- toolbar: верхняя строка — ввод репа + кнопка; строка снизу — поиск -->
+    
     <div class="toolbar" role="toolbar" aria-label="Панель инструментов">
       <div class="toolbar-row">
         <input id="rep" class="input" type="number" min="1" max="1000000" value="30000" aria-label="Требуемая репутация">
@@ -153,13 +153,13 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
         </div>
       </div>
 
-      <!-- по твоему желанию поиск под кнопкой -->
+ 
       <div class="toolbar-row">
         <input id="search" class="search" placeholder="Поиск по наименованию (текущая вкладка)" aria-label="Поиск">
       </div>
     </div>
 
-    <!-- Individual -->
+    
     <div id="individual-panel" class="table-wrap" role="region" aria-labelledby="individual-label">
       <table class="table" aria-describedby="individual-label">
         <thead>
@@ -179,7 +179,7 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
       </table>
     </div>
 
-    <!-- Personal -->
+    
     <div id="personal-panel" class="table-wrap" role="region" aria-labelledby="personal-label" style="display:none">
       <table class="table" aria-describedby="personal-label">
         <thead>
@@ -198,7 +198,7 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
       </table>
     </div>
 
-    <!-- Non-personal -->
+    
     <div id="nonpersonal-panel" class="table-wrap" role="region" aria-labelledby="nonpersonal-label" style="display:none">
       <table class="table" aria-describedby="nonpersonal-label">
         <thead>
@@ -233,7 +233,7 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
   </aside>
 </div>
 
-<!-- Templates -->
+
 <template id="row-template">
   <tr>
     <td class="col-name"></td>
@@ -270,7 +270,7 @@ th.col-total-cost, td.col-total-cost{width:12%;min-width:110px}
 </template>
 
 <script>
-/* CONFIG (твой полный набор данных) */
+
 const CONFIG = {
   individualItems: [
     { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 6, price: 3200 },
@@ -349,13 +349,13 @@ const CONFIG = {
   ]
 };
 
-/* Utilities */
+
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 const fmt = n => (n===null||n===undefined||isNaN(n))?'-':String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
 const escapeHtml = s => { const d=document.createElement('div'); d.textContent = s; return d.innerHTML; };
 
-/* Refs */
+
 const refs = {
   search: $('#search'),
   rep: $('#rep'),
@@ -373,7 +373,7 @@ const refs = {
 
 let state = { lastResults: null, activeTab: 'individual' };
 
-/* Calculation logic (как ранее) */
+
 function calculateAll(requiredRep){
   requiredRep = Math.max(1, Math.min(1000000, Number(requiredRep)||1));
 
@@ -411,7 +411,7 @@ function calculateAll(requiredRep){
   renderSummaryFromResults();
 }
 
-/* Renderers (как ранее) */
+
 function renderIndividuals(items){
   refs.individualBody.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -497,7 +497,7 @@ function renderNonPersonal(items){
   refs.nonpersonalBody.appendChild(frag);
 }
 
-/* Summary */
+
 function renderSummaryFromResults(){
   refs.summaryGrid.innerHTML = '';
   if(!state.lastResults) return;
@@ -529,7 +529,7 @@ function renderSummaryFromResults(){
       else if(c.source === 'personal') activateTab('personal');
       else activateTab('non-personal');
       
-      // Добавляем задержку для гарантии что таблица отрендерилась
+     
       setTimeout(() => {
         highlightRowByName(c.name, c.source);
         scrollToHighlightedRow(c.name, c.source);
@@ -542,18 +542,18 @@ function renderSummaryFromResults(){
   refs.summaryGrid.appendChild(frag);
 }
 
-/* Highlight row - ИСПРАВЛЕННАЯ ФУНКЦИЯ */
+
 function highlightRowByName(name, source){
   const body = source === 'individual' ? refs.individualBody : (source === 'personal' ? refs.personalBody : refs.nonpersonalBody);
   if(!body) return;
   
-  // Сначала снимаем все выделения
+
   body.querySelectorAll('tr').forEach(tr => {
     tr.style.outline = 'none';
     tr.style.boxShadow = 'none';
   });
   
-  // Ищем строку для выделения
+ 
   const rows = Array.from(body.querySelectorAll('tr'));
   const match = rows.find(r => {
     const nameCell = r.querySelector('.col-name');
@@ -561,18 +561,18 @@ function highlightRowByName(name, source){
   });
   
   if(match){
-    // Используем box-shadow для более заметного выделения
+    
     match.style.boxShadow = '0 0 0 3px rgba(212,184,92,0.6)';
     match.style.transition = 'box-shadow 0.3s ease';
     
-    // Убираем выделение через 3.5 секунды
+   
     setTimeout(()=> {
       match.style.boxShadow = 'none';
     }, 3500);
   }
 }
 
-/* НОВАЯ ФУНКЦИЯ: Прокрутка к выделенной строке */
+
 function scrollToHighlightedRow(name, source){
   const body = source === 'individual' ? refs.individualBody : (source === 'personal' ? refs.personalBody : refs.nonpersonalBody);
   if(!body) return;
@@ -584,7 +584,7 @@ function scrollToHighlightedRow(name, source){
   });
   
   if(match){
-    // Прокручиваем к выделенной строке
+    
     match.scrollIntoView({
       behavior: 'smooth',
       block: 'center'
@@ -592,7 +592,7 @@ function scrollToHighlightedRow(name, source){
   }
 }
 
-/* Search filter for visible tab */
+
 function applySearchFilter(){
   const q = (refs.search.value || '').trim();
   const rx = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'i') : null;
@@ -616,7 +616,7 @@ function applySearchFilter(){
   });
 }
 
-/* Tabs activation with visible contour behaviour */
+
 function activateTab(id){
   refs.tabs.forEach(t => t.classList.remove('active'));
   const tab = refs.tabs.find(t => t.getAttribute('data-tab') === id);
@@ -635,7 +635,7 @@ refs.tabs.forEach(t => {
   });
 });
 
-/* Events */
+
 refs.calcBtn.addEventListener('click', ()=>{
   const rep = Number(refs.rep.value) || 1;
   refs.calcBtn.disabled = true;
@@ -651,12 +651,12 @@ refs.calcBtn.addEventListener('click', ()=>{
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
-/* initial render */
+
 calculateAll(Number(refs.rep.value) || 30000);
 applySearchFilter();
 </script>
 
-<!-- Яндекс.Метрика (ID 104609292) -->
+
 <script defer>
 (function(m,e,t,r,i,k,a){
   m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -671,4 +671,5 @@ ym(104609292, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true
 
 </body>
 </html>
+
 
