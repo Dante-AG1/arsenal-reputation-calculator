@@ -314,5 +314,57 @@ refs.calcBtn.addEventListener('click', ()=>{
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
+/* --- СОРТИРОВКА ТАБЛИЦ + ФИЛЬТРАЦИЯ --- */
+function enableTableSorting() {
+const panels = [
+{ panel: refs.individualPanel, body: refs.individualBody },
+{ panel: refs.personalPanel, body: refs.personalBody },
+{ panel: refs.nonpersonalPanel, body: refs.nonpersonalBody }
+];
+
+panels.forEach(({ panel, body }) => {
+const headers = panel.querySelectorAll('thead th');
+headers.forEach((th, index) => {
+th.style.cursor = 'pointer';
+th.addEventListener('click', () => {
+headers.forEach(h => h.removeAttribute('data-sort-dir')); // сброс стрелок
+const dir = th.dataset.sortDir === 'asc' ? 'desc' : 'asc';
+th.dataset.sortDir = dir;
+sortTable(body, index, dir);
+applySearchFilter(); // сохраняем фильтр
+});
+});
+});
+}
+
+function sortTable(tbody, colIndex, direction = 'asc') {
+const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+const isNumeric = rows.every(r => {
+const text = r.cells[colIndex]?.textContent.replace(/[^\d.-]/g, '');
+return text && !isNaN(parseFloat(text));
+});
+
+rows.sort((a, b) => {
+const getVal = tr => tr.cells[colIndex]?.textContent.trim() || '';
+const aVal = getVal(a);
+const bVal = getVal(b);
+if (isNumeric) {
+const numA = parseFloat(aVal.replace(/[^\d.-]/g, '')) || 0;
+const numB = parseFloat(bVal.replace(/[^\d.-]/g, '')) || 0;
+return direction === 'asc' ? numA - numB : numB - numA;
+} else {
+return direction === 'asc'
+? aVal.localeCompare(bVal, 'ru')
+: bVal.localeCompare(aVal, 'ru');
+}
+});
+
+tbody.innerHTML = '';
+rows.forEach(r => tbody.appendChild(r));
+}
+
+enableTableSorting();
+
+
 calculateAll(Number(refs.rep.value) || 30000);
 applySearchFilter();
