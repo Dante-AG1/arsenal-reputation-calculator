@@ -105,29 +105,43 @@ let state = {
 
 
 function initSorting() {
+  console.log('Инициализация сортировки...');
   
-  $$('#individual-table th[data-sort]').forEach(th => {
+
+  const individualHeaders = $$('#individual-table th[data-sort]');
+  console.log('Найдено заголовков для отдельных предметов:', individualHeaders.length);
+  
+  individualHeaders.forEach(th => {
     th.style.cursor = 'pointer';
     th.addEventListener('click', () => {
       const field = th.getAttribute('data-sort');
+      console.log('Сортировка отдельных предметов по полю:', field);
       handleSort('individual', field);
     });
   });
 
- 
-  $$('#personal-table th[data-sort]').forEach(th => {
+
+  const personalHeaders = $$('#personal-table th[data-sort]');
+  console.log('Найдено заголовков для персональных ящиков:', personalHeaders.length);
+  
+  personalHeaders.forEach(th => {
     th.style.cursor = 'pointer';
     th.addEventListener('click', () => {
       const field = th.getAttribute('data-sort');
+      console.log('Сортировка персональных ящиков по полю:', field);
       handleSort('personal', field);
     });
   });
 
- 
-  $$('#nonpersonal-table th[data-sort]').forEach(th => {
+
+  const nonpersonalHeaders = $$('#nonpersonal-table th[data-sort]');
+  console.log('Найдено заголовков для не персональных ящиков:', nonpersonalHeaders.length);
+  
+  nonpersonalHeaders.forEach(th => {
     th.style.cursor = 'pointer';
     th.addEventListener('click', () => {
       const field = th.getAttribute('data-sort');
+      console.log('Сортировка не персональных ящиков по полю:', field);
       handleSort('nonpersonal', field);
     });
   });
@@ -145,7 +159,6 @@ function handleSort(tableType, field) {
  
   state.sortState[tableType] = { field, direction };
   
- 
   if (state.lastResults) {
     let items;
     switch (tableType) {
@@ -163,7 +176,7 @@ function handleSort(tableType, field) {
         break;
     }
   }
-
+ 
   updateSortIndicators(tableType, field, direction);
 }
 
@@ -171,15 +184,15 @@ function sortItems(items, field, direction) {
   return [...items].sort((a, b) => {
     let aVal = a[field];
     let bVal = b[field];
-    
+  
     if (typeof aVal === 'string') {
       aVal = aVal.toLowerCase();
       bVal = bVal.toLowerCase();
     }
-    
-    if (typeof aVal === 'string' && aVal.includes(' ')) {
-      aVal = parseInt(aVal.replace(/\s/g, '')) || 0;
-      bVal = parseInt(bVal.replace(/\s/g, '')) || 0;
+ 
+    if (field === 'deathDrop') {
+      aVal = aVal ? 1 : 0;
+      bVal = bVal ? 1 : 0;
     }
     
     let result = 0;
@@ -191,10 +204,11 @@ function sortItems(items, field, direction) {
 }
 
 function updateSortIndicators(tableType, currentField, currentDirection) {
- 
+  
   $$(`#${tableType}-table th`).forEach(th => {
     th.classList.remove('sort-asc', 'sort-desc');
   });
+  
 
   const activeTh = $(`#${tableType}-table th[data-sort="${currentField}"]`);
   if (activeTh) {
@@ -448,8 +462,24 @@ refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
 
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
+  console.log('Страница загружена, инициализация сортировки...');
   initSorting();
   calculateAll(Number(refs.rep.value) || 30000);
   applySearchFilter();
 });
+
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM загружен, инициализация сортировки...');
+    initSorting();
+    calculateAll(Number(refs.rep.value) || 30000);
+    applySearchFilter();
+  });
+} else {
+  console.log('DOM уже загружен, инициализация сортировки...');
+  initSorting();
+  calculateAll(Number(refs.rep.value) || 30000);
+  applySearchFilter();
+}
