@@ -93,6 +93,7 @@ th[data-sort] {
   position: relative;
   padding-right: 20px !important;
   user-select: none;
+  cursor: pointer;
 }
 
 th[data-sort]:hover {
@@ -118,9 +119,4 @@ th[data-sort].sort-asc::after {
 
 th[data-sort].sort-desc::after {
   border-top: 5px solid currentColor;
-}
-
-
-th[data-sort]:hover ~ * td {
-  background-color: rgba(0, 0, 0, 0.02);
 }
