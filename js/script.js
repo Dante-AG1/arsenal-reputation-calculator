@@ -103,11 +103,11 @@ let state = {
   }
 };
 
-
+// Добавляем обработчики сортировки
 function initSorting() {
   console.log('Инициализация сортировки...');
   
-
+  // Для отдельных предметов
   const individualHeaders = $$('#individual-table th[data-sort]');
   console.log('Найдено заголовков для отдельных предметов:', individualHeaders.length);
   
@@ -120,7 +120,7 @@ function initSorting() {
     });
   });
 
-
+  // Для персональных ящиков
   const personalHeaders = $$('#personal-table th[data-sort]');
   console.log('Найдено заголовков для персональных ящиков:', personalHeaders.length);
   
@@ -133,7 +133,7 @@ function initSorting() {
     });
   });
 
-
+  // Для не персональных ящиков
   const nonpersonalHeaders = $$('#nonpersonal-table th[data-sort]');
   console.log('Найдено заголовков для не персональных ящиков:', nonpersonalHeaders.length);
   
@@ -150,15 +150,16 @@ function initSorting() {
 function handleSort(tableType, field) {
   const currentState = state.sortState[tableType];
   
- 
+  // Определяем направление сортировки
   let direction = 'asc';
   if (currentState.field === field) {
     direction = currentState.direction === 'asc' ? 'desc' : 'asc';
   }
   
- 
+  // Обновляем состояние
   state.sortState[tableType] = { field, direction };
   
+  // Сортируем и перерисовываем таблицу
   if (state.lastResults) {
     let items;
     switch (tableType) {
@@ -176,7 +177,8 @@ function handleSort(tableType, field) {
         break;
     }
   }
- 
+  
+  // Обновляем индикаторы сортировки
   updateSortIndicators(tableType, field, direction);
 }
 
@@ -184,12 +186,14 @@ function sortItems(items, field, direction) {
   return [...items].sort((a, b) => {
     let aVal = a[field];
     let bVal = b[field];
-  
+    
+    // Для строковых значений
     if (typeof aVal === 'string') {
       aVal = aVal.toLowerCase();
       bVal = bVal.toLowerCase();
     }
- 
+    
+    // Для специальных случаев
     if (field === 'deathDrop') {
       aVal = aVal ? 1 : 0;
       bVal = bVal ? 1 : 0;
@@ -204,12 +208,12 @@ function sortItems(items, field, direction) {
 }
 
 function updateSortIndicators(tableType, currentField, currentDirection) {
-  
+  // Убираем все индикаторы
   $$(`#${tableType}-table th`).forEach(th => {
     th.classList.remove('sort-asc', 'sort-desc');
   });
   
-
+  // Добавляем индикатор для активного столбца
   const activeTh = $(`#${tableType}-table th[data-sort="${currentField}"]`);
   if (activeTh) {
     activeTh.classList.add(currentDirection === 'asc' ? 'sort-asc' : 'sort-desc');
@@ -257,7 +261,7 @@ function calculateAll(requiredRep){
   renderNonPersonal(state.lastResults.nonpersonal);
   renderSummaryFromResults();
   
- 
+  // Обновляем индикаторы сортировки
   updateSortIndicators('individual', state.sortState.individual.field, state.sortState.individual.direction);
   updateSortIndicators('personal', state.sortState.personal.field, state.sortState.personal.direction);
   updateSortIndicators('nonpersonal', state.sortState.nonpersonal.field, state.sortState.nonpersonal.direction);
@@ -461,24 +465,17 @@ refs.calcBtn.addEventListener('click', ()=>{
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
-
-window.addEventListener('load', () => {
-  console.log('Страница загружена, инициализация сортировки...');
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM загружен, инициализация...');
   initSorting();
   calculateAll(Number(refs.rep.value) || 30000);
   applySearchFilter();
 });
 
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM загружен, инициализация сортировки...');
-    initSorting();
-    calculateAll(Number(refs.rep.value) || 30000);
-    applySearchFilter();
-  });
-} else {
-  console.log('DOM уже загружен, инициализация сортировки...');
+// Если DOM уже загружен
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  console.log('DOM уже загружен, инициализация...');
   initSorting();
   calculateAll(Number(refs.rep.value) || 30000);
   applySearchFilter();
