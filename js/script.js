@@ -314,7 +314,7 @@ refs.calcBtn.addEventListener('click', ()=>{
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
-/* --- СОРТИРОВКА ТАБЛИЦ + ФИЛЬТРАЦИЯ --- */
+/* --- СОРТИРОВКА ТАБЛИЦ + ФИЛЬТРАЦИЯ (ИСПРАВЛЕННАЯ) --- */
 function enableTableSorting() {
 const panels = [
 { panel: refs.individualPanel, body: refs.individualBody },
@@ -327,24 +327,36 @@ const headers = panel.querySelectorAll('thead th');
 headers.forEach((th, index) => {
 th.style.cursor = 'pointer';
 th.addEventListener('click', () => {
-headers.forEach(h => h.removeAttribute('data-sort-dir')); // сброс стрелок
-const dir = th.dataset.sortDir === 'asc' ? 'desc' : 'asc';
-th.dataset.sortDir = dir;
-sortTable(body, index, dir);
-applySearchFilter(); // сохраняем фильтр
+// Сохраняем текущее направление сортировки
+const currentDir = th.getAttribute('data-sort-dir');
+const newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+```
+    // Сбрасываем стрелки у других заголовков
+    headers.forEach(h => h.removeAttribute('data-sort-dir'));
+    th.setAttribute('data-sort-dir', newDir);
+
+    // Сортируем строки
+    sortTable(body, index, newDir);
+    applySearchFilter(); // сохраняем фильтр
+  });
 });
-});
+```
+
 });
 }
 
 function sortTable(tbody, colIndex, direction = 'asc') {
-const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
-const isNumeric = rows.every(r => {
+const rows = Array.from(tbody.querySelectorAll('tr'));
+const visibleRows = rows.filter(r => r.style.display !== 'none');
+if (visibleRows.length === 0) return;
+
+const isNumeric = visibleRows.every(r => {
 const text = r.cells[colIndex]?.textContent.replace(/[^\d.-]/g, '');
 return text && !isNaN(parseFloat(text));
 });
 
-rows.sort((a, b) => {
+visibleRows.sort((a, b) => {
 const getVal = tr => tr.cells[colIndex]?.textContent.trim() || '';
 const aVal = getVal(a);
 const bVal = getVal(b);
@@ -360,10 +372,11 @@ return direction === 'asc'
 });
 
 tbody.innerHTML = '';
-rows.forEach(r => tbody.appendChild(r));
+visibleRows.forEach(r => tbody.appendChild(r));
 }
 
 enableTableSorting();
+
 
 
 calculateAll(Number(refs.rep.value) || 30000);
