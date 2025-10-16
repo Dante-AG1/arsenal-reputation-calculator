@@ -93,7 +93,115 @@ const refs = {
   summaryGrid: $('#summary'),
   refreshSummary: $('#refresh-summary')
 };
-let state = { lastResults: null, activeTab: 'individual' };
+let state = { 
+  lastResults: null, 
+  activeTab: 'individual',
+  sortState: {
+    individual: { field: 'totalCost', direction: 'asc' },
+    personal: { field: 'totalCost', direction: 'asc' },
+    nonpersonal: { field: 'totalCost', direction: 'asc' }
+  }
+};
+
+
+function initSorting() {
+  
+  $$('#individual-table th[data-sort]').forEach(th => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      const field = th.getAttribute('data-sort');
+      handleSort('individual', field);
+    });
+  });
+
+ 
+  $$('#personal-table th[data-sort]').forEach(th => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      const field = th.getAttribute('data-sort');
+      handleSort('personal', field);
+    });
+  });
+
+ 
+  $$('#nonpersonal-table th[data-sort]').forEach(th => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      const field = th.getAttribute('data-sort');
+      handleSort('nonpersonal', field);
+    });
+  });
+}
+
+function handleSort(tableType, field) {
+  const currentState = state.sortState[tableType];
+  
+ 
+  let direction = 'asc';
+  if (currentState.field === field) {
+    direction = currentState.direction === 'asc' ? 'desc' : 'asc';
+  }
+  
+ 
+  state.sortState[tableType] = { field, direction };
+  
+ 
+  if (state.lastResults) {
+    let items;
+    switch (tableType) {
+      case 'individual':
+        items = sortItems(state.lastResults.individuals, field, direction);
+        renderIndividuals(items);
+        break;
+      case 'personal':
+        items = sortItems(state.lastResults.personal, field, direction);
+        renderPersonal(items);
+        break;
+      case 'nonpersonal':
+        items = sortItems(state.lastResults.nonpersonal, field, direction);
+        renderNonPersonal(items);
+        break;
+    }
+  }
+
+  updateSortIndicators(tableType, field, direction);
+}
+
+function sortItems(items, field, direction) {
+  return [...items].sort((a, b) => {
+    let aVal = a[field];
+    let bVal = b[field];
+    
+    if (typeof aVal === 'string') {
+      aVal = aVal.toLowerCase();
+      bVal = bVal.toLowerCase();
+    }
+    
+    if (typeof aVal === 'string' && aVal.includes(' ')) {
+      aVal = parseInt(aVal.replace(/\s/g, '')) || 0;
+      bVal = parseInt(bVal.replace(/\s/g, '')) || 0;
+    }
+    
+    let result = 0;
+    if (aVal < bVal) result = -1;
+    if (aVal > bVal) result = 1;
+    
+    return direction === 'desc' ? -result : result;
+  });
+}
+
+function updateSortIndicators(tableType, currentField, currentDirection) {
+ 
+  $$(`#${tableType}-table th`).forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+  });
+
+  const activeTh = $(`#${tableType}-table th[data-sort="${currentField}"]`);
+  if (activeTh) {
+    activeTh.classList.add(currentDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+  }
+}
+
 function calculateAll(requiredRep){
   requiredRep = Math.max(1, Math.min(1000000, Number(requiredRep)||1));
   const individuals = CONFIG.individualItems.map(item=>{
@@ -103,7 +211,8 @@ function calculateAll(requiredRep){
     const totalWeight = Math.round(qty * Number(item.weight || 0) * 100) / 100;
     const repPerPrice = repPer ? Math.round((item.price||0) / repPer) : 0;
     return {...item, quantityNeeded: qty, totalCost, totalWeight, repPerPrice};
-  }).sort((a,b)=>a.totalCost-b.totalCost);
+  });
+
   const personal = CONFIG.personalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
     const boxesNeeded = Math.ceil(requiredRep / 80);
@@ -111,7 +220,8 @@ function calculateAll(requiredRep){
     const totalWeight = boxesNeeded * 15;
     const repPerPrice = Math.round(boxCost / 80);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
-  }).sort((a,b)=>a.totalCost-b.totalCost);
+  });
+
   const nonpersonal = CONFIG.nonPersonalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
     const boxesNeeded = Math.ceil(requiredRep / 135);
@@ -119,13 +229,26 @@ function calculateAll(requiredRep){
     const totalWeight = boxesNeeded * 15;
     const repPerPrice = Math.round(boxCost / 135);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
-  }).sort((a,b)=>a.totalCost-b.totalCost);
-  state.lastResults = { individuals, personal, nonpersonal, requiredRep };
-  renderIndividuals(individuals);
-  renderPersonal(personal);
-  renderNonPersonal(nonpersonal);
+  });
+
+  state.lastResults = { 
+    individuals: sortItems(individuals, state.sortState.individual.field, state.sortState.individual.direction),
+    personal: sortItems(personal, state.sortState.personal.field, state.sortState.personal.direction),
+    nonpersonal: sortItems(nonpersonal, state.sortState.nonpersonal.field, state.sortState.nonpersonal.direction),
+    requiredRep 
+  };
+  
+  renderIndividuals(state.lastResults.individuals);
+  renderPersonal(state.lastResults.personal);
+  renderNonPersonal(state.lastResults.nonpersonal);
   renderSummaryFromResults();
+  
+ 
+  updateSortIndicators('individual', state.sortState.individual.field, state.sortState.individual.direction);
+  updateSortIndicators('personal', state.sortState.personal.field, state.sortState.personal.direction);
+  updateSortIndicators('nonpersonal', state.sortState.nonpersonal.field, state.sortState.nonpersonal.direction);
 }
+
 function renderIndividuals(items){
   refs.individualBody.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -148,6 +271,7 @@ function renderIndividuals(items){
   });
   refs.individualBody.appendChild(frag);
 }
+
 function renderPersonal(items){
   refs.personalBody.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -171,6 +295,7 @@ function renderPersonal(items){
   });
   refs.personalBody.appendChild(frag);
 }
+
 function renderNonPersonal(items){
   refs.nonpersonalBody.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -194,6 +319,7 @@ function renderNonPersonal(items){
   });
   refs.nonpersonalBody.appendChild(frag);
 }
+
 function renderSummaryFromResults(){
   refs.summaryGrid.innerHTML = '';
   if(!state.lastResults) return;
@@ -227,6 +353,7 @@ function renderSummaryFromResults(){
   });
   refs.summaryGrid.appendChild(frag);
 }
+
 function highlightRowByName(name, source){
   const body = source === 'individual' ? refs.individualBody : (source === 'personal' ? refs.personalBody : refs.nonpersonalBody);
   if(!body) return;
@@ -247,6 +374,7 @@ function highlightRowByName(name, source){
     }, 3500);
   }
 }
+
 function scrollToHighlightedRow(name, source){
   const body = source === 'individual' ? refs.individualBody : (source === 'personal' ? refs.personalBody : refs.nonpersonalBody);
   if(!body) return;
@@ -262,6 +390,7 @@ function scrollToHighlightedRow(name, source){
     });
   }
 }
+
 function applySearchFilter(){
   const q = (refs.search.value || '').trim();
   const rx = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'i') : null;
@@ -284,6 +413,7 @@ function applySearchFilter(){
     }
   });
 }
+
 function activateTab(id){
   refs.tabs.forEach(t => t.classList.remove('active'));
   const tab = refs.tabs.find(t => t.getAttribute('data-tab') === id);
@@ -294,12 +424,14 @@ function activateTab(id){
   refs.nonpersonalPanel.style.display = id === 'non-personal' ? 'block' : 'none';
   applySearchFilter();
 }
+
 refs.tabs.forEach(t => {
   t.addEventListener('click', e => {
     const id = e.currentTarget.getAttribute('data-tab');
     activateTab(id);
   });
 });
+
 refs.calcBtn.addEventListener('click', ()=>{
   const rep = Number(refs.rep.value) || 1;
   refs.calcBtn.disabled = true;
@@ -311,73 +443,13 @@ refs.calcBtn.addEventListener('click', ()=>{
     refs.calcBtn.textContent = prev;
   }, 60);
 });
+
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
 
-/* --- СОРТИРОВКА ТАБЛИЦ + ФИЛЬТРАЦИЯ (ИСПРАВЛЕННАЯ) --- */
-function enableTableSorting() {
-const panels = [
-{ panel: refs.individualPanel, body: refs.individualBody },
-{ panel: refs.personalPanel, body: refs.personalBody },
-{ panel: refs.nonpersonalPanel, body: refs.nonpersonalBody }
-];
 
-panels.forEach(({ panel, body }) => {
-const headers = panel.querySelectorAll('thead th');
-headers.forEach((th, index) => {
-th.style.cursor = 'pointer';
-th.addEventListener('click', () => {
-// Сохраняем текущее направление сортировки
-const currentDir = th.getAttribute('data-sort-dir');
-const newDir = currentDir === 'asc' ? 'desc' : 'asc';
-
-```
-    // Сбрасываем стрелки у других заголовков
-    headers.forEach(h => h.removeAttribute('data-sort-dir'));
-    th.setAttribute('data-sort-dir', newDir);
-
-    // Сортируем строки
-    sortTable(body, index, newDir);
-    applySearchFilter(); // сохраняем фильтр
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  initSorting();
+  calculateAll(Number(refs.rep.value) || 30000);
+  applySearchFilter();
 });
-```
-
-});
-}
-
-function sortTable(tbody, colIndex, direction = 'asc') {
-const rows = Array.from(tbody.querySelectorAll('tr'));
-const visibleRows = rows.filter(r => r.style.display !== 'none');
-if (visibleRows.length === 0) return;
-
-const isNumeric = visibleRows.every(r => {
-const text = r.cells[colIndex]?.textContent.replace(/[^\d.-]/g, '');
-return text && !isNaN(parseFloat(text));
-});
-
-visibleRows.sort((a, b) => {
-const getVal = tr => tr.cells[colIndex]?.textContent.trim() || '';
-const aVal = getVal(a);
-const bVal = getVal(b);
-if (isNumeric) {
-const numA = parseFloat(aVal.replace(/[^\d.-]/g, '')) || 0;
-const numB = parseFloat(bVal.replace(/[^\d.-]/g, '')) || 0;
-return direction === 'asc' ? numA - numB : numB - numA;
-} else {
-return direction === 'asc'
-? aVal.localeCompare(bVal, 'ru')
-: bVal.localeCompare(aVal, 'ru');
-}
-});
-
-tbody.innerHTML = '';
-visibleRows.forEach(r => tbody.appendChild(r));
-}
-
-enableTableSorting();
-
-
-
-calculateAll(Number(refs.rep.value) || 30000);
-applySearchFilter();
