@@ -313,5 +313,53 @@ refs.calcBtn.addEventListener('click', ()=>{
 });
 refs.search.addEventListener('input', applySearchFilter);
 refs.refreshSummary.addEventListener('click', renderSummaryFromResults);
+
+function enableTableSorting() {
+  const panels = [
+    { panel: refs.individualPanel, body: refs.individualBody, type: 'individual' },
+    { panel: refs.personalPanel, body: refs.personalBody, type: 'personal' },
+    { panel: refs.nonpersonalPanel, body: refs.nonpersonalBody, type: 'nonpersonal' }
+  ];
+
+  panels.forEach(({ panel, body, type }) => {
+    const headers = panel.querySelectorAll('thead th');
+    headers.forEach((th, index) => {
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', () => {
+        const dir = th.dataset.sortDir === 'asc' ? 'desc' : 'asc';
+        headers.forEach(h => delete h.dataset.sortDir);
+        th.dataset.sortDir = dir;
+        sortTable(body, index, dir);
+      });
+    });
+  });
+}
+
+function sortTable(tbody, colIndex, direction = 'asc') {
+  const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+  const isNumeric = rows.every(r => {
+    const text = r.cells[colIndex]?.textContent.replace(/[^\d.-]/g, '');
+    return text && !isNaN(parseFloat(text));
+  });
+
+  rows.sort((a, b) => {
+    const getVal = tr => tr.cells[colIndex]?.textContent.trim().replace(/[^\d.-]/g, '') || '';
+    const aVal = getVal(a);
+    const bVal = getVal(b);
+    if (isNumeric) {
+      return direction === 'asc' ? aVal - bVal : bVal - aVal;
+    } else {
+      return direction === 'asc'
+        ? aVal.localeCompare(bVal, 'ru')
+        : bVal.localeCompare(aVal, 'ru');
+    }
+  });
+
+  tbody.innerHTML = '';
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+enableTableSorting();
+
 calculateAll(Number(refs.rep.value) || 30000);
 applySearchFilter();
