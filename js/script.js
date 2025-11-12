@@ -1,30 +1,30 @@
 const CONFIG = {
   individualItems: [
-    { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 6, price: 3500 },
-    { name: "Запчасти для пда", deathDrop: true, weight: 0.7, repPerUnit: 16, price: 8900 },
+    { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 3500 },
+    { name: "Запчасти для пда", deathDrop: true, weight: 0.7, repPerUnit: 18, price: 8900 },
     { name: "Огромный артефактный фрагмент", deathDrop: true, weight: 0.5, repPerUnit: 2, price: 1250 },
-    { name: "Обычный артефактный фрагмент", deathDrop: true, weight: 0.3, repPerUnit: 1, price: 1000 },
-    { name: "Остатки приборов «Шепота»", deathDrop: true, weight: 2.5, repPerUnit: 100, price: 67000 },
-    { name: "Фильтр", deathDrop: true, weight: 0.5, repPerUnit: 10, price: 5000 },
-    { name: "Драгоценности", deathDrop: true, weight: 0.2, repPerUnit: 55, price: 38000 },
+    { name: "Обычный артефактный фрагмент", deathDrop: true, weight: 0.3, repPerUnit: 2, price: 1000 },
+    { name: "Остатки приборов «Шепота»", deathDrop: true, weight: 2.5, repPerUnit: 95, price: 67000 },
+    { name: "Фильтр", deathDrop: true, weight: 0.5, repPerUnit: 12, price: 5000 },
+    { name: "Драгоценности", deathDrop: true, weight: 0.2, repPerUnit: 65, price: 38000 },
     { name: "Малый артефактный фрагмент", deathDrop: true, weight: 0.2, repPerUnit: 1, price: 710 },
-    { name: "Рука сильного шныря", deathDrop: true, weight: 0.5, repPerUnit: 5, price: 3000 },
-    { name: "Протоартефакт", deathDrop: true, weight: 0, repPerUnit: 5, price: 3800 },
+    { name: "Рука сильного шныря", deathDrop: true, weight: 0.5, repPerUnit: 9, price: 3000 },
+    { name: "Протоартефакт", deathDrop: true, weight: 0, repPerUnit: 4, price: 3800 },
     { name: "Большой ящик с продовольствием", deathDrop: true, weight: 6, repPerUnit: 9, price: 7000 },
     { name: "Черная селезенка", deathDrop: true, weight: 1.6, repPerUnit: 150, price: 160000 },
     { name: "Сердце Лимб", deathDrop: true, weight: 3, repPerUnit: 1000, price: 1050000 },
-    { name: "Лоскут светящейся кожи", deathDrop: true, weight: 0.4, repPerUnit: 10, price: 6200 },
+    { name: "Лоскут светящейся кожи", deathDrop: true, weight: 0.4, repPerUnit: 15, price: 6200 },
     { name: "Глаз сильного бурелома", deathDrop: true, weight: 1, repPerUnit: 15, price: 13000 },
-    { name: "Медная катушка", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 9000 },
+    { name: "Медная катушка", deathDrop: true, weight: 0.3, repPerUnit: 10, price: 9000 },
     { name: "Кость мутанта", deathDrop: true, weight: 2, repPerUnit: 6, price: 6000 },
     { name: "Медицинские инструменты", deathDrop: true, weight: 0.3, repPerUnit: 20, price: 25000 },
     { name: "Комплект заводских инструментов", deathDrop: true, weight: 0.4, repPerUnit: 11, price: 25000 },
     { name: "Блок данных «Лямбда»", deathDrop: false, weight: 0.2, repPerUnit: 150, price: 200000 },
     { name: "Прототипы «Шепота»", deathDrop: true, weight: 0.3, repPerUnit: 55, price: 73000 },
-    { name: "Ящик с деталями", deathDrop: true, weight: 3, repPerUnit: 3, price: 3000 },
-    { name: "Крупный артефактный фрагмент", deathDrop: true, weight: 0.4, repPerUnit: 1, price: 1500 },
+    { name: "Ящик с деталями", deathDrop: true, weight: 3, repPerUnit: 6, price: 3000 },
+    { name: "Крупный артефактный фрагмент", deathDrop: true, weight: 0.4, repPerUnit: 3, price: 1500 },
     { name: "Соленоид", deathDrop: true, weight: 0.4, repPerUnit: 2, price: 9000 },
-    { name: "Расцветший Горьколистник", deathDrop: false, weight: 0.05, repPerUnit: 65, price: 90000 },
+    { name: "Расцветший Горьколистник", deathDrop: false, weight: 0.05, repPerUnit: 85, price: 90000 },
     { name: "Набор компонентов брони", deathDrop: false, weight: 0.2, repPerUnit: 2, price: 3100 },
     { name: "Темный лимб", deathDrop: false, weight: 0.2, repPerUnit: 90, price: 150000 },
     { name: "Компоненты редких сплавов", deathDrop: true, weight: 0.4, repPerUnit: 35, price: 55000 },
@@ -33,8 +33,8 @@ const CONFIG = {
     { name: "Ноутбук", deathDrop: true, weight: 10, repPerUnit: 12, price: 23000 },
     { name: "Системы наведения", deathDrop: true, weight: 0.4, repPerUnit: 16, price: 30000 },
     { name: "Блок данных «Бета»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 85000 },
-    { name: "Квантовый генератор", deathDrop: false, weight: 3, repPerUnit: 30, price: 55000 },
-    { name: "Цветущий рыжий папоротник", deathDrop: false, weight: 0.05, repPerUnit: 6, price: 12000 },
+    { name: "Портативный квантовый генератор", deathDrop: false, weight: 3, repPerUnit: 50, price: 55000 },
+    { name: "Цветущий рыжий папоротник", deathDrop: false, weight: 0.05, repPerUnit: 12, price: 12000 },
     { name: "Малый ящик с продовольствием", deathDrop: true, weight: 1, repPerUnit: 1, price: 2000 },
     { name: "Ящик с запчастями", deathDrop: true, weight: 2.5, repPerUnit: 1, price: 3000 },
     { name: "Блок данных «Гамма»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 95000 },
@@ -53,25 +53,25 @@ const CONFIG = {
     { name: "Измерительное оборудование", resourcesNeeded: 2, resourcePrice: 80000 },
     { name: "Защитное покрытие", resourcesNeeded: 2, resourcePrice: 80000 },
     { name: "Мутаген", resourcesNeeded: 1, resourcePrice: 180000 },
-    { name: "Нейродегенерант", resourcesNeeded: 15, resourcePrice: 15000 },
+    { name: "Нейродегенерант", resourcesNeeded: 14, resourcePrice: 15000 },
     { name: "Теломераза", resourcesNeeded: 1, resourcePrice: 150000 },
-    { name: "Продвинутый электрод", resourcesNeeded: 9, resourcePrice: 20000 },
-    { name: "Операционный усилитель", resourcesNeeded: 3, resourcePrice: 60000 },
+    { name: "Продвинутый электрод", resourcesNeeded: 10, resourcePrice: 20000 },
+    { name: "Операционный усилитель", resourcesNeeded: 2, resourcePrice: 60000 },
     { name: "Роторная система", resourcesNeeded: 3, resourcePrice: 70000 },
     { name: "Сверло", resourcesNeeded: 4, resourcePrice: 70000 }
   ],
   nonPersonalBoxes: [
-    { name: "Набор болтов", resourcesNeeded: 9, resourcePrice: 15000 },
-    { name: "Маячок группы Гамма", resourcesNeeded: 16, resourcePrice: 0 },
-    { name: "Маячок группы Бета", resourcesNeeded: 16, resourcePrice: 0 },
-    { name: "Маячок группы Альфа", resourcesNeeded: 16, resourcePrice: 0 },
-    { name: "Пурпурные минералы", resourcesNeeded: 300, resourcePrice: 900 },
+    { name: "Набор болтов", resourcesNeeded: 10, resourcePrice: 15000 },
+    { name: "Маячки группы «Гамма»", resourcesNeeded: 15, resourcePrice: 0 },
+    { name: "Маячки группы «Бета»", resourcesNeeded: 15, resourcePrice: 0 },
+    { name: "Маячки группы «Альфа»", resourcesNeeded: 15, resourcePrice: 0 },
+    { name: "Пурпурные минералы", resourcesNeeded: 330, resourcePrice: 900 },
     { name: "Янтарная полынь", resourcesNeeded: 8, resourcePrice: 15000 },
     { name: "Гнозис", resourcesNeeded: 500, resourcePrice: 1000 },
-    { name: "Электродвигатель", resourcesNeeded: 19, resourcePrice: 5000 },
-    { name: "Чертоцвет", resourcesNeeded: 45, resourcePrice: 2500 },
-    { name: "Алые минералы", resourcesNeeded: 130, resourcePrice: 1000 },
-    { name: "Мутировавшие ферменты", resourcesNeeded: 10, resourcePrice: 11600 },
+    { name: "Электродвигатель", resourcesNeeded: 15, resourcePrice: 5000 },
+    { name: "Чертоцвет", resourcesNeeded: 50, resourcePrice: 2500 },
+    { name: "Алые минералы", resourcesNeeded: 140, resourcePrice: 1000 },
+    { name: "Мутировавшие ферменты", resourcesNeeded: 9, resourcePrice: 11600 },
     { name: "Золотые минералы", resourcesNeeded: 20, resourcePrice: 7000 }
   ]
 };
@@ -233,19 +233,19 @@ function calculateAll(requiredRep){
 
   const personal = CONFIG.personalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
-    const boxesNeeded = Math.ceil(requiredRep / 80);
+    const boxesNeeded = Math.ceil(requiredRep / 110);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * 15;
-    const repPerPrice = Math.round(boxCost / 80);
+    const totalWeight = boxesNeeded * 7,5;
+    const repPerPrice = Math.round(boxCost / 110);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
 
   const nonpersonal = CONFIG.nonPersonalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
-    const boxesNeeded = Math.ceil(requiredRep / 135);
+    const boxesNeeded = Math.ceil(requiredRep / 150);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * 15;
-    const repPerPrice = Math.round(boxCost / 135);
+    const totalWeight = boxesNeeded * 7,5;
+    const repPerPrice = Math.round(boxCost / 150);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
 
