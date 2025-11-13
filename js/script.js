@@ -34,7 +34,7 @@ const CONFIG = {
     { name: "Системы наведения", deathDrop: true, weight: 0.4, repPerUnit: 16, price: 30000 },
     { name: "Блок данных «Бета»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 85000 },
     { name: "Портативный квантовый генератор", deathDrop: false, weight: 3, repPerUnit: 50, price: 55000 },
-    { name: "Цветущий рыжий папоротник", deathDrop: false, weight: 0.05, repPerUnit: 12, price: 12000 },
+    { name: "Цветущий рыжий папоротник", deathDrop: false, weight: 0.05, repPerUnit: 12, price: 14000 },
     { name: "Малый ящик с продовольствием", deathDrop: true, weight: 1, repPerUnit: 1, price: 2000 },
     { name: "Ящик с запчастями", deathDrop: true, weight: 2.5, repPerUnit: 1, price: 3000 },
     { name: "Блок данных «Гамма»", deathDrop: false, weight: 0.2, repPerUnit: 45, price: 95000 },
