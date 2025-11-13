@@ -240,7 +240,7 @@ function calculateAll(requiredRep){
     const boxCost = box.resourcesNeeded * box.resourcePrice;
     const boxesNeeded = Math.ceil(requiredRep / PERSONAL_BOX_REP);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * PERSONAL_BOX_WEIGHT;
+    const totalWeight = +(boxesNeeded * PERSONAL_BOX_WEIGHT).toFixed(2);
     const repPerPrice = Math.round(boxCost / PERSONAL_BOX_REP);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
@@ -249,7 +249,7 @@ function calculateAll(requiredRep){
     const boxCost = box.resourcesNeeded * box.resourcePrice;
     const boxesNeeded = Math.ceil(requiredRep / NONPERSONAL_BOX_REP);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * NONPERSONAL_BOX_WEIGHT;
+    const totalWeight = +(boxesNeeded * NONPERSONAL_BOX_WEIGHT).toFixed(2);
     const repPerPrice = Math.round(boxCost / NONPERSONAL_BOX_REP);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
