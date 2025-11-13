@@ -1,4 +1,5 @@
 const CONFIG = {
+  
   individualItems: [
     { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 4500 },
     { name: "Запчасти для пда", deathDrop: true, weight: 0.7, repPerUnit: 18, price: 8900 },
@@ -75,11 +76,15 @@ const CONFIG = {
     { name: "Золотые минералы", resourcesNeeded: 20, resourcePrice: 7000 }
   ]
 };
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-const fmt = n => (n===null||n===undefined||isNaN(n))?'-':String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
-const escapeHtml = s => { const d=document.createElement('div'); d.textContent = s; return d.innerHTML; };
-const refs = {
+  const PERSONAL_BOX_WEIGHT = 7.5     // Вес персонального ящика (кг)
+  const NONPERSONAL_BOX_WEIGHT = 7.5  // Вес не персонального ящика (кг)
+  const PERSONAL_BOX_REP = 110        // Репутация за персональный ящик
+  const NONPERSONAL_BOX_REP = 150     // Репутация за не персональный ящик
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+  const fmt = n => (n===null||n===undefined||isNaN(n))?'-':String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  const escapeHtml = s => { const d=document.createElement('div'); d.textContent = s; return d.innerHTML; };
+  const refs = {
   search: $('#search'),
   rep: $('#rep'),
   calcBtn: $('#calculate-btn'),
@@ -233,19 +238,19 @@ function calculateAll(requiredRep){
 
   const personal = CONFIG.personalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
-    const boxesNeeded = Math.ceil(requiredRep / 110);
+    const boxesNeeded = Math.ceil(requiredRep / PERSONAL_BOX_REP);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * 7.5;
-    const repPerPrice = Math.round(boxCost / 110);
+    const totalWeight = boxesNeeded * PERSONAL_BOX_WEIGHT;
+    const repPerPrice = Math.round(boxCost / PERSONAL_BOX_REP);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
 
   const nonpersonal = CONFIG.nonPersonalBoxes.map(box=>{
     const boxCost = box.resourcesNeeded * box.resourcePrice;
-    const boxesNeeded = Math.ceil(requiredRep / 150);
+    const boxesNeeded = Math.ceil(requiredRep / NONPERSONAL_BOX_REP);
     const totalCost = Math.round(boxesNeeded * boxCost);
-    const totalWeight = boxesNeeded * 7.5;
-    const repPerPrice = Math.round(boxCost / 150);
+    const totalWeight = boxesNeeded * NONPERSONAL_BOX_WEIGHT;
+    const repPerPrice = Math.round(boxCost / NONPERSONAL_BOX_REP);
     return {...box, boxCost, boxesNeeded, totalCost, totalWeight, repPerPrice};
   });
 
