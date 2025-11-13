@@ -24,7 +24,7 @@ const CONFIG = {
     { name: "Ящик с деталями", deathDrop: true, weight: 3, repPerUnit: 6, price: 3000 },
     { name: "Крупный артефактный фрагмент", deathDrop: true, weight: 0.4, repPerUnit: 3, price: 1500 },
     { name: "Соленоид", deathDrop: true, weight: 0.4, repPerUnit: 2, price: 9000 },
-    { name: "Расцветший Горьколистник", deathDrop: false, weight: 0.05, repPerUnit: 85, price: 90000 },
+    { name: "Расцветший Горьколистник", deathDrop: false, weight: 0.05, repPerUnit: 85, price: 100000 },
     { name: "Набор компонентов брони", deathDrop: false, weight: 0.2, repPerUnit: 2, price: 3100 },
     { name: "Темный лимб", deathDrop: false, weight: 0.2, repPerUnit: 90, price: 150000 },
     { name: "Компоненты редких сплавов", deathDrop: true, weight: 0.4, repPerUnit: 35, price: 55000 },
