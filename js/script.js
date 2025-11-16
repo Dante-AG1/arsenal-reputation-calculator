@@ -1,7 +1,7 @@
 const CONFIG = {
   
   individualItems: [
-    { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 4500 },
+    { name: "Дорогие сигареты", deathDrop: true, weight: 0.3, repPerUnit: 5, price: 3000 },
     { name: "Запчасти для пда", deathDrop: true, weight: 0.7, repPerUnit: 18, price: 8900 },
     { name: "Огромный артефактный фрагмент", deathDrop: true, weight: 0.5, repPerUnit: 2, price: 1250 },
     { name: "Обычный артефактный фрагмент", deathDrop: true, weight: 0.3, repPerUnit: 2, price: 1000 },
