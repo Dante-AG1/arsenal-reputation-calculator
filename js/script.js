@@ -20,7 +20,7 @@ const CONFIG = {
     { name: "Кость мутанта", deathDrop: true, weight: 2, repPerUnit: 6, price: 6000 },
     { name: "Медицинские инструменты", deathDrop: true, weight: 0.3, repPerUnit: 20, price: 25000 },
     { name: "Комплект заводских инструментов", deathDrop: true, weight: 0.4, repPerUnit: 11, price: 25000 },
-    { name: "Блок данных «Лямбда»", deathDrop: false, weight: 0.2, repPerUnit: 150, price: 200000 },
+    { name: "Блок данных «Лямбда»", deathDrop: false, weight: 0.2, repPerUnit: 150, price: 140000 },
     { name: "Прототипы «Шепота»", deathDrop: true, weight: 0.3, repPerUnit: 55, price: 73000 },
     { name: "Ящик с деталями", deathDrop: true, weight: 3, repPerUnit: 6, price: 3000 },
     { name: "Крупный артефактный фрагмент", deathDrop: true, weight: 0.4, repPerUnit: 3, price: 1500 },
